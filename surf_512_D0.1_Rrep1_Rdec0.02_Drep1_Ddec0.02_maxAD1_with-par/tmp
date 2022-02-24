@@ -1,0 +1,503 @@
+g++ -c -O3 -Wall -DNDEBUG  -DUSE_SFMT -DMTPREC64 -DHAVE_SSE2 -msse2 -DHAVE_BOOST_SERIALIZATION=1 -funroll-loops -I. -Winline -finline-limit=5000 --param inline-unit-growth=2000 --param large-function-growth=2000 -I. -I/home/takeuchi/local/include/ -I/home/takeuchi/study/dna-simple/program/ver4/tbb22_013oss/include/ RandomLib/Random.cpp -o RandomLib/Random.o
+In file included from ./RandomLib/MT19937.hpp:21,
+                 from ./RandomLib/RandomCanonical.hpp:20,
+                 from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/RandomSeed.hpp:74:7: error: ISO C++17 does not allow dynamic exception specifications
+   74 |       throw(std::bad_alloc) {
+      |       ^~~~~
+./RandomLib/RandomSeed.hpp:88:7: error: ISO C++17 does not allow dynamic exception specifications
+   88 |       throw(std::bad_alloc) {
+      |       ^~~~~
+./RandomLib/RandomSeed.hpp:98:30: error: ISO C++17 does not allow dynamic exception specifications
+   98 |     void Reseed(seed_type n) throw(std::bad_alloc) {
+      |                              ^~~~~
+./RandomLib/RandomSeed.hpp:108:19: error: ISO C++17 does not allow dynamic exception specifications
+  108 |     void Reseed() throw(std::bad_alloc) { Reseed(SeedWord()); }
+      |                   ^~~~~
+./RandomLib/RandomSeed.hpp:112:39: error: ISO C++17 does not allow dynamic exception specifications
+  112 |     void Reseed(const std::string& s) throw(std::bad_alloc) {
+      |                                       ^~~~~
+./RandomLib/RandomSeed.hpp:130:36: error: ISO C++17 does not allow dynamic exception specifications
+  130 |     std::string SeedString() const throw(std::bad_alloc)
+      |                                    ^~~~~
+./RandomLib/RandomSeed.hpp:160:7: error: ISO C++17 does not allow dynamic exception specifications
+  160 |       throw(std::ios::failure) = 0;
+      |       ^~~~~
+./RandomLib/RandomSeed.hpp:167:7: error: ISO C++17 does not allow dynamic exception specifications
+  167 |       throw(std::ios::failure, std::out_of_range, std::bad_alloc) = 0;
+      |       ^~~~~
+./RandomLib/RandomSeed.hpp:195:7: error: ISO C++17 does not allow dynamic exception specifications
+  195 |       throw(std::ios::failure) {
+      |       ^~~~~
+./RandomLib/RandomSeed.hpp:220:7: error: ISO C++17 does not allow dynamic exception specifications
+  220 |       throw(std::bad_alloc);
+      |       ^~~~~
+./RandomLib/RandomSeed.hpp:314:7: error: ISO C++17 does not allow dynamic exception specifications
+  314 |       throw(std::ios::failure);
+      |       ^~~~~
+./RandomLib/RandomSeed.hpp:320:7: error: ISO C++17 does not allow dynamic exception specifications
+  320 |       throw(std::ios::failure);
+      |       ^~~~~
+./RandomLib/RandomSeed.hpp: In static member function ‘static void RandomLib::RandomSeed::CheckSum(UIntType, RandomLib::RandomSeed::u32&) [with UIntType = unsigned int; unsigned int BitWidth = 32; RandomLib::RandomSeed::u32 = unsigned int]’:
+./RandomLib/RandomSeed.hpp:343:39: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  343 |     check = (check << 1 | check >> 31 & u32(1)) + n;
+      |                           ~~~~~~~~~~~~^~~~~~~~
+In file included from ./RandomLib/RandomCanonical.hpp:20,
+                 from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/MT19937.hpp: At global scope:
+./RandomLib/MT19937.hpp:176:7: error: ISO C++17 does not allow dynamic exception specifications
+  176 |       throw(std::bad_alloc) { Reseed(v); }
+      |       ^~~~~
+./RandomLib/MT19937.hpp:188:35: error: ISO C++17 does not allow dynamic exception specifications
+  188 |     explicit MT19937(seed_type n) throw(std::bad_alloc)
+      |                                   ^~~~~
+./RandomLib/MT19937.hpp:193:15: error: ISO C++17 does not allow dynamic exception specifications
+  193 |     MT19937() throw(std::bad_alloc) { Reseed(); }
+      |               ^~~~~
+./RandomLib/MT19937.hpp:197:44: error: ISO C++17 does not allow dynamic exception specifications
+  197 |     explicit MT19937(const std::string& s) throw(std::bad_alloc)
+      |                                            ^~~~~
+./RandomLib/MT19937.hpp:264:7: error: ISO C++17 does not allow dynamic exception specifications
+  264 |       throw(std::ios::failure);
+      |       ^~~~~
+./RandomLib/MT19937.hpp:273:7: error: ISO C++17 does not allow dynamic exception specifications
+  273 |       throw(std::ios::failure, std::out_of_range, std::bad_alloc) {
+      |       ^~~~~
+./RandomLib/MT19937.hpp:327:7: error: ISO C++17 does not allow dynamic exception specifications
+  327 |       throw(std::invalid_argument) {
+      |       ^~~~~
+./RandomLib/MT19937.hpp:437:34: error: ISO C++17 does not allow dynamic exception specifications
+  437 |     u32 Check(u32 version) const throw(std::out_of_range);
+      |                                  ^~~~~
+./RandomLib/MT19937.hpp:444:7: error: ISO C++17 does not allow dynamic exception specifications
+  444 |       throw(std::ios::failure, std::out_of_range, std::bad_alloc);
+      |       ^~~~~
+In file included from ./RandomLib/RandomCanonical.hpp:21,
+                 from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/SFMT19937.hpp:235:7: error: ISO C++17 does not allow dynamic exception specifications
+  235 |       throw(std::bad_alloc) { Reseed(v); }
+      |       ^~~~~
+./RandomLib/SFMT19937.hpp:248:37: error: ISO C++17 does not allow dynamic exception specifications
+  248 |     explicit SFMT19937(seed_type n) throw(std::bad_alloc)
+      |                                     ^~~~~
+./RandomLib/SFMT19937.hpp:253:17: error: ISO C++17 does not allow dynamic exception specifications
+  253 |     SFMT19937() throw(std::bad_alloc) { Reseed(); }
+      |                 ^~~~~
+./RandomLib/SFMT19937.hpp:257:46: error: ISO C++17 does not allow dynamic exception specifications
+  257 |     explicit SFMT19937(const std::string& s) throw(std::bad_alloc)
+      |                                              ^~~~~
+./RandomLib/SFMT19937.hpp:324:7: error: ISO C++17 does not allow dynamic exception specifications
+  324 |       throw(std::ios::failure);
+      |       ^~~~~
+./RandomLib/SFMT19937.hpp:333:7: error: ISO C++17 does not allow dynamic exception specifications
+  333 |       throw(std::ios::failure, std::out_of_range, std::bad_alloc) {
+      |       ^~~~~
+./RandomLib/SFMT19937.hpp:387:7: error: ISO C++17 does not allow dynamic exception specifications
+  387 |       throw(std::invalid_argument) {
+      |       ^~~~~
+./RandomLib/SFMT19937.hpp:505:34: error: ISO C++17 does not allow dynamic exception specifications
+  505 |     u32 Check(u32 version) const throw(std::out_of_range);
+      |                                  ^~~~~
+./RandomLib/SFMT19937.hpp:512:7: error: ISO C++17 does not allow dynamic exception specifications
+  512 |       throw(std::ios::failure, std::out_of_range, std::bad_alloc);
+      |       ^~~~~
+In file included from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/RandomCanonical.hpp:65:7: error: ISO C++17 does not allow dynamic exception specifications
+   65 |       throw(std::bad_alloc) : Generator(v) {}
+      |       ^~~~~
+./RandomLib/RandomCanonical.hpp:74:55: error: ISO C++17 does not allow dynamic exception specifications
+   74 |     explicit RandomCanonical(RandomSeed::seed_type n) throw(std::bad_alloc);
+      |                                                       ^~~~~
+./RandomLib/RandomCanonical.hpp:78:23: error: ISO C++17 does not allow dynamic exception specifications
+   78 |     RandomCanonical() throw(std::bad_alloc) : Generator() {}
+      |                       ^~~~~
+./RandomLib/RandomCanonical.hpp:82:52: error: ISO C++17 does not allow dynamic exception specifications
+   82 |     explicit RandomCanonical(const std::string& s) throw(std::bad_alloc)
+      |                                                    ^~~~~
+./RandomLib/RandomCanonical.hpp:611:5: error: ISO C++17 does not allow dynamic exception specifications
+  611 |     throw(std::bad_alloc) : Generator(n) {
+      |     ^~~~~
+In file included from RandomLib/Random.cpp:48:
+./RandomLib/Random.hpp:17:24: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+   17 | #define RCSID_RANDOM_H "$Id: Random.hpp 6384 2007-04-24 11:43:38Z ckarney $"
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./RandomLib/Random.hpp:17:24: note: in definition of macro ‘RCSID_RANDOM_H’
+   17 | #define RCSID_RANDOM_H "$Id: Random.hpp 6384 2007-04-24 11:43:38Z ckarney $"
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/RandomCanonical.hpp:16:33: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+   16 | #define RCSID_RANDOMCANONICAL_H "$Id: RandomCanonical.hpp 6394 2007-05-07 12:34:42Z ckarney $"
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./RandomLib/RandomCanonical.hpp:16:33: note: in definition of macro ‘RCSID_RANDOMCANONICAL_H’
+   16 | #define RCSID_RANDOMCANONICAL_H "$Id: RandomCanonical.hpp 6394 2007-05-07 12:34:42Z ckarney $"
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ./RandomLib/RandomCanonical.hpp:19,
+                 from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/Power2.hpp:15:24: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+   15 | #define RCSID_POWER2_H "$Id: Power2.hpp 6326 2006-10-16 02:26:00Z ckarney $"
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./RandomLib/Power2.hpp:15:24: note: in definition of macro ‘RCSID_POWER2_H’
+   15 | #define RCSID_POWER2_H "$Id: Power2.hpp 6326 2006-10-16 02:26:00Z ckarney $"
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ./RandomLib/RandomCanonical.hpp:20,
+                 from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/MT19937.hpp:19:25: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+   19 | #define RCSID_MT19937_H "$Id: MT19937.hpp 6406 2007-05-23 13:29:52Z ckarney $"
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./RandomLib/MT19937.hpp:19:25: note: in definition of macro ‘RCSID_MT19937_H’
+   19 | #define RCSID_MT19937_H "$Id: MT19937.hpp 6406 2007-05-23 13:29:52Z ckarney $"
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ./RandomLib/RandomCanonical.hpp:21,
+                 from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/SFMT19937.hpp:26:27: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+   26 | #define RCSID_SFMT19937_H "$Id: SFMT19937.hpp 6406 2007-05-23 13:29:52Z ckarney $"
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./RandomLib/SFMT19937.hpp:26:27: note: in definition of macro ‘RCSID_SFMT19937_H’
+   26 | #define RCSID_SFMT19937_H "$Id: SFMT19937.hpp 6406 2007-05-23 13:29:52Z ckarney $"
+      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ./RandomLib/MT19937.hpp:21,
+                 from ./RandomLib/RandomCanonical.hpp:20,
+                 from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/RandomSeed.hpp:15:28: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+   15 | #define RCSID_RANDOMSEED_H "$Id: RandomSeed.hpp 6407 2007-05-24 17:13:46Z ckarney $"
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./RandomLib/RandomSeed.hpp:15:28: note: in definition of macro ‘RCSID_RANDOMSEED_H’
+   15 | #define RCSID_RANDOMSEED_H "$Id: RandomSeed.hpp 6407 2007-05-24 17:13:46Z ckarney $"
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RandomLib/Random.cpp:168:5: error: ISO C++17 does not allow dynamic exception specifications
+  168 |     throw(std::bad_alloc) {
+      |     ^~~~~
+RandomLib/Random.cpp:188:5: error: ISO C++17 does not allow dynamic exception specifications
+  188 |     throw(std::ios::failure) {
+      |     ^~~~~
+RandomLib/Random.cpp:211:5: error: ISO C++17 does not allow dynamic exception specifications
+  211 |     throw(std::ios::failure) {
+      |     ^~~~~
+RandomLib/Random.cpp:229:5: error: ISO C++17 does not allow dynamic exception specifications
+  229 |     throw(std::ios::failure) {
+      |     ^~~~~
+RandomLib/Random.cpp:237:5: error: ISO C++17 does not allow dynamic exception specifications
+  237 |     throw(std::ios::failure) {
+      |     ^~~~~
+RandomLib/Random.cpp: In member function ‘void RandomLib::RandomSeed::SeedToState(UIntType*, unsigned int) const [with UIntType = unsigned int; int BitWidth = 32]’:
+RandomLib/Random.cpp:258:43: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  258 |       r = u32(1812433253UL) * (r ^ r >> w - 2) + k;
+      |                                         ~~^~~
+RandomLib/Random.cpp:267:54: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  267 |         r = state[i1] ^ u32(1664525UL) * (r ^ r >> w - 2);
+      |                                                    ~~^~~
+RandomLib/Random.cpp:274:57: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  274 |         r = state[i1] ^ u32(1566083941UL) * (r ^ r >> w - 2);
+      |                                                       ~~^~~
+RandomLib/Random.cpp: In member function ‘void RandomLib::RandomSeed::SeedToState(UIntType*, unsigned int) const [with UIntType = long long unsigned int; int BitWidth = 64]’:
+RandomLib/Random.cpp:298:53: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  298 |       r = u64(6364136223846793005ULL) * (r ^ r >> w - 2) + k;
+      |                                                   ~~^~~
+RandomLib/Random.cpp:308:67: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  308 |         r = state[i1] ^ u64(3935559000370003845ULL) * (r ^ r >> w - 2);
+      |                                                                 ~~^~~
+RandomLib/Random.cpp:317:67: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  317 |         r = state[i1] ^ u64(2862933555777941757ULL) * (r ^ r >> w - 2);
+      |                                                                 ~~^~~
+RandomLib/Random.cpp: In member function ‘void RandomLib::RandomSeed::SeedToState(UIntType*, unsigned int) const [with UIntType = unsigned int; int BitWidth = 128]’:
+RandomLib/Random.cpp:362:40: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  362 |       r = u32(1664525UL) * (r ^ r >> w - 5);
+      |                                      ~~^~~
+RandomLib/Random.cpp:379:43: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  379 |       r = u32(1566083941UL) * (r ^ r >> w - 5);
+      |                                         ~~^~~
+RandomLib/Random.cpp: At global scope:
+RandomLib/Random.cpp:448:5: error: ISO C++17 does not allow dynamic exception specifications
+  448 |     throw(std::out_of_range) {
+      |     ^~~~~
+RandomLib/Random.cpp:494:5: error: ISO C++17 does not allow dynamic exception specifications
+  494 |     throw(std::ios::failure) {
+      |     ^~~~~
+RandomLib/Random.cpp:514:5: error: ISO C++17 does not allow dynamic exception specifications
+  514 |     throw(std::ios::failure, std::out_of_range, std::bad_alloc) {
+      |     ^~~~~
+In file included from ./RandomLib/RandomCanonical.hpp:20,
+                 from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/MT19937.hpp: In instantiation of ‘const result_type RandomLib::MT19937<unsigned int, 32>::max’:
+RandomLib/Random.cpp:671:18:   required from here
+./RandomLib/MT19937.hpp:98:67: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+   98 |       ~result_type(0) >> std::numeric_limits<result_type>::digits - width;
+      |                                                            ~~~~~~~^~~~~~~
+./RandomLib/MT19937.hpp: In instantiation of ‘const result_type RandomLib::MT19937<long long unsigned int, 64>::max’:
+RandomLib/Random.cpp:672:18:   required from here
+./RandomLib/MT19937.hpp:98:67: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+RandomLib/Random.cpp:749:5: error: ISO C++17 does not allow dynamic exception specifications
+  749 |     throw(std::out_of_range) {
+      |     ^~~~~
+RandomLib/Random.cpp:787:5: error: ISO C++17 does not allow dynamic exception specifications
+  787 |     throw(std::ios::failure) {
+      |     ^~~~~
+RandomLib/Random.cpp:807:5: error: ISO C++17 does not allow dynamic exception specifications
+  807 |     throw(std::ios::failure, std::out_of_range, std::bad_alloc) {
+      |     ^~~~~
+In file included from ./RandomLib/RandomCanonical.hpp:21,
+                 from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/SFMT19937.hpp: In instantiation of ‘const result_type RandomLib::SFMT19937<unsigned int, 32>::max’:
+RandomLib/Random.cpp:1138:18:   required from here
+./RandomLib/SFMT19937.hpp:111:67: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  111 |       ~result_type(0) >> std::numeric_limits<result_type>::digits - width;
+      |                                                            ~~~~~~~^~~~~~~
+./RandomLib/SFMT19937.hpp: In instantiation of ‘const result_type RandomLib::SFMT19937<long long unsigned int, 64>::max’:
+RandomLib/Random.cpp:1139:18:   required from here
+./RandomLib/SFMT19937.hpp:111:67: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+RandomLib/Random.cpp: In instantiation of ‘void RandomLib::MT19937<UIntType, BitWidth>::Init() [with UIntType = unsigned int; unsigned int BitWidth = 32]’:
+RandomLib/Random.cpp:671:18:   required from here
+RandomLib/Random.cpp:405:43: warning: suggest parentheses around ‘-’ inside ‘<<’ [-Wparentheses]
+  405 |       _state[0] = result_type(1) << width - 1; // with prob 2^-19937
+      |                                     ~~~~~~^~~
+RandomLib/Random.cpp:411:67: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  411 |     result_type q = _state[N - 1] ^ _state[M - 1], s = q >> width - 1;
+      |                                                             ~~~~~~^~~
+RandomLib/Random.cpp:413:27: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  413 |     _state[0] = _state[0] & UPPER_MASK | q & LOWER_MASK;
+      |                 ~~~~~~~~~~^~~~~~~~~~~~
+RandomLib/Random.cpp: In instantiation of ‘void RandomLib::MT19937<UIntType, BitWidth>::NextBatch(long long unsigned int) [with UIntType = unsigned int; unsigned int BitWidth = 32]’:
+RandomLib/Random.cpp:671:18:   required from here
+RandomLib/Random.cpp:614:16: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  614 |     (_state[I] & UPPER_MASK | _state[J] & LOWER_MASK) >> 1
+      |      ~~~~~~~~~~^~~~~~~~~~~~
+RandomLib/Random.cpp:623:30: note: in expansion of macro ‘MT19937_STEP’
+  623 |       for (; i < N - M; ++i) MT19937_STEP(i, i + 1, i + M    );
+      |                              ^~~~~~~~~~~~
+RandomLib/Random.cpp:614:16: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  614 |     (_state[I] & UPPER_MASK | _state[J] & LOWER_MASK) >> 1
+      |      ~~~~~~~~~~^~~~~~~~~~~~
+RandomLib/Random.cpp:624:30: note: in expansion of macro ‘MT19937_STEP’
+  624 |       for (; i < N - 1; ++i) MT19937_STEP(i, i + 1, i + M - N);
+      |                              ^~~~~~~~~~~~
+RandomLib/Random.cpp:614:16: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  614 |     (_state[I] & UPPER_MASK | _state[J] & LOWER_MASK) >> 1
+      |      ~~~~~~~~~~^~~~~~~~~~~~
+RandomLib/Random.cpp:625:7: note: in expansion of macro ‘MT19937_STEP’
+  625 |       MT19937_STEP(N - 1, 0, M - 1); // i = N - 1
+      |       ^~~~~~~~~~~~
+RandomLib/Random.cpp: In instantiation of ‘void RandomLib::MT19937<UIntType, BitWidth>::PreviousBatch(long long unsigned int) [with UIntType = unsigned int; unsigned int BitWidth = 32]’:
+RandomLib/Random.cpp:671:18:   required from here
+RandomLib/Random.cpp:646:59: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  646 |     result_type q = _state[J] ^ _state[K], s = q >> width - 1;  \
+      |                                                     ~~~~~~^~~
+RandomLib/Random.cpp:660:7: note: in expansion of macro ‘MT19937_REVSTEP’
+  660 |       MT19937_REVSTEP(0, N - 1, M - 1); // i = N
+      |       ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:648:19: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  648 |     _state[I] = p & UPPER_MASK | q & LOWER_MASK;                \
+      |                 ~~^~~~~~~~~~~~
+RandomLib/Random.cpp:660:7: note: in expansion of macro ‘MT19937_REVSTEP’
+  660 |       MT19937_REVSTEP(0, N - 1, M - 1); // i = N
+      |       ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:646:59: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  646 |     result_type q = _state[J] ^ _state[K], s = q >> width - 1;  \
+      |                                                     ~~~~~~^~~
+RandomLib/Random.cpp:662:30: note: in expansion of macro ‘MT19937_REVSTEP’
+  662 |       for (; i > N - M; --i) MT19937_REVSTEP(i, i - 1, i + M - 1 - N);
+      |                              ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:648:19: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  648 |     _state[I] = p & UPPER_MASK | q & LOWER_MASK;                \
+      |                 ~~^~~~~~~~~~~~
+RandomLib/Random.cpp:662:30: note: in expansion of macro ‘MT19937_REVSTEP’
+  662 |       for (; i > N - M; --i) MT19937_REVSTEP(i, i - 1, i + M - 1 - N);
+      |                              ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:646:59: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  646 |     result_type q = _state[J] ^ _state[K], s = q >> width - 1;  \
+      |                                                     ~~~~~~^~~
+RandomLib/Random.cpp:663:30: note: in expansion of macro ‘MT19937_REVSTEP’
+  663 |       for (; i        ; --i) MT19937_REVSTEP(i, i - 1, i + M - 1    );
+      |                              ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:648:19: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  648 |     _state[I] = p & UPPER_MASK | q & LOWER_MASK;                \
+      |                 ~~^~~~~~~~~~~~
+RandomLib/Random.cpp:663:30: note: in expansion of macro ‘MT19937_REVSTEP’
+  663 |       for (; i        ; --i) MT19937_REVSTEP(i, i - 1, i + M - 1    );
+      |                              ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:646:59: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  646 |     result_type q = _state[J] ^ _state[K], s = q >> width - 1;  \
+      |                                                     ~~~~~~^~~
+RandomLib/Random.cpp:664:7: note: in expansion of macro ‘MT19937_REVSTEP’
+  664 |       MT19937_REVSTEP(0, N - 1, M - 1); // i = 0
+      |       ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:648:19: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  648 |     _state[I] = p & UPPER_MASK | q & LOWER_MASK;                \
+      |                 ~~^~~~~~~~~~~~
+RandomLib/Random.cpp:664:7: note: in expansion of macro ‘MT19937_REVSTEP’
+  664 |       MT19937_REVSTEP(0, N - 1, M - 1); // i = 0
+      |       ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp: In instantiation of ‘RandomLib::RandomSeed::u32 RandomLib::MT19937<UIntType, BitWidth>::Check(RandomLib::RandomSeed::u32) const [with UIntType = unsigned int; unsigned int BitWidth = 32; RandomLib::RandomSeed::u32 = unsigned int]’:
+RandomLib/Random.cpp:671:18:   required from here
+RandomLib/Random.cpp:482:69: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  482 |       result_type q = _state[N - 1] ^ _state[M - 1], s = q >> width - 1;
+      |                                                               ~~~~~~^~~
+RandomLib/Random.cpp: In instantiation of ‘void RandomLib::MT19937<UIntType, BitWidth>::Init() [with UIntType = long long unsigned int; unsigned int BitWidth = 64]’:
+RandomLib/Random.cpp:672:18:   required from here
+RandomLib/Random.cpp:405:43: warning: suggest parentheses around ‘-’ inside ‘<<’ [-Wparentheses]
+  405 |       _state[0] = result_type(1) << width - 1; // with prob 2^-19937
+      |                                     ~~~~~~^~~
+RandomLib/Random.cpp:411:67: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  411 |     result_type q = _state[N - 1] ^ _state[M - 1], s = q >> width - 1;
+      |                                                             ~~~~~~^~~
+RandomLib/Random.cpp:413:27: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  413 |     _state[0] = _state[0] & UPPER_MASK | q & LOWER_MASK;
+      |                 ~~~~~~~~~~^~~~~~~~~~~~
+RandomLib/Random.cpp: In instantiation of ‘void RandomLib::MT19937<UIntType, BitWidth>::NextBatch(long long unsigned int) [with UIntType = long long unsigned int; unsigned int BitWidth = 64]’:
+RandomLib/Random.cpp:672:18:   required from here
+RandomLib/Random.cpp:614:16: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  614 |     (_state[I] & UPPER_MASK | _state[J] & LOWER_MASK) >> 1
+      |      ~~~~~~~~~~^~~~~~~~~~~~
+RandomLib/Random.cpp:623:30: note: in expansion of macro ‘MT19937_STEP’
+  623 |       for (; i < N - M; ++i) MT19937_STEP(i, i + 1, i + M    );
+      |                              ^~~~~~~~~~~~
+RandomLib/Random.cpp:614:16: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  614 |     (_state[I] & UPPER_MASK | _state[J] & LOWER_MASK) >> 1
+      |      ~~~~~~~~~~^~~~~~~~~~~~
+RandomLib/Random.cpp:624:30: note: in expansion of macro ‘MT19937_STEP’
+  624 |       for (; i < N - 1; ++i) MT19937_STEP(i, i + 1, i + M - N);
+      |                              ^~~~~~~~~~~~
+RandomLib/Random.cpp:614:16: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  614 |     (_state[I] & UPPER_MASK | _state[J] & LOWER_MASK) >> 1
+      |      ~~~~~~~~~~^~~~~~~~~~~~
+RandomLib/Random.cpp:625:7: note: in expansion of macro ‘MT19937_STEP’
+  625 |       MT19937_STEP(N - 1, 0, M - 1); // i = N - 1
+      |       ^~~~~~~~~~~~
+RandomLib/Random.cpp: In instantiation of ‘void RandomLib::MT19937<UIntType, BitWidth>::PreviousBatch(long long unsigned int) [with UIntType = long long unsigned int; unsigned int BitWidth = 64]’:
+RandomLib/Random.cpp:672:18:   required from here
+RandomLib/Random.cpp:646:59: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  646 |     result_type q = _state[J] ^ _state[K], s = q >> width - 1;  \
+      |                                                     ~~~~~~^~~
+RandomLib/Random.cpp:660:7: note: in expansion of macro ‘MT19937_REVSTEP’
+  660 |       MT19937_REVSTEP(0, N - 1, M - 1); // i = N
+      |       ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:648:19: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  648 |     _state[I] = p & UPPER_MASK | q & LOWER_MASK;                \
+      |                 ~~^~~~~~~~~~~~
+RandomLib/Random.cpp:660:7: note: in expansion of macro ‘MT19937_REVSTEP’
+  660 |       MT19937_REVSTEP(0, N - 1, M - 1); // i = N
+      |       ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:646:59: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  646 |     result_type q = _state[J] ^ _state[K], s = q >> width - 1;  \
+      |                                                     ~~~~~~^~~
+RandomLib/Random.cpp:662:30: note: in expansion of macro ‘MT19937_REVSTEP’
+  662 |       for (; i > N - M; --i) MT19937_REVSTEP(i, i - 1, i + M - 1 - N);
+      |                              ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:648:19: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  648 |     _state[I] = p & UPPER_MASK | q & LOWER_MASK;                \
+      |                 ~~^~~~~~~~~~~~
+RandomLib/Random.cpp:662:30: note: in expansion of macro ‘MT19937_REVSTEP’
+  662 |       for (; i > N - M; --i) MT19937_REVSTEP(i, i - 1, i + M - 1 - N);
+      |                              ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:646:59: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  646 |     result_type q = _state[J] ^ _state[K], s = q >> width - 1;  \
+      |                                                     ~~~~~~^~~
+RandomLib/Random.cpp:663:30: note: in expansion of macro ‘MT19937_REVSTEP’
+  663 |       for (; i        ; --i) MT19937_REVSTEP(i, i - 1, i + M - 1    );
+      |                              ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:648:19: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  648 |     _state[I] = p & UPPER_MASK | q & LOWER_MASK;                \
+      |                 ~~^~~~~~~~~~~~
+RandomLib/Random.cpp:663:30: note: in expansion of macro ‘MT19937_REVSTEP’
+  663 |       for (; i        ; --i) MT19937_REVSTEP(i, i - 1, i + M - 1    );
+      |                              ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:646:59: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  646 |     result_type q = _state[J] ^ _state[K], s = q >> width - 1;  \
+      |                                                     ~~~~~~^~~
+RandomLib/Random.cpp:664:7: note: in expansion of macro ‘MT19937_REVSTEP’
+  664 |       MT19937_REVSTEP(0, N - 1, M - 1); // i = 0
+      |       ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp:648:19: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+  648 |     _state[I] = p & UPPER_MASK | q & LOWER_MASK;                \
+      |                 ~~^~~~~~~~~~~~
+RandomLib/Random.cpp:664:7: note: in expansion of macro ‘MT19937_REVSTEP’
+  664 |       MT19937_REVSTEP(0, N - 1, M - 1); // i = 0
+      |       ^~~~~~~~~~~~~~~
+RandomLib/Random.cpp: In instantiation of ‘RandomLib::RandomSeed::u32 RandomLib::MT19937<UIntType, BitWidth>::Check(RandomLib::RandomSeed::u32) const [with UIntType = long long unsigned int; unsigned int BitWidth = 64; RandomLib::RandomSeed::u32 = unsigned int]’:
+RandomLib/Random.cpp:672:18:   required from here
+RandomLib/Random.cpp:482:69: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  482 |       result_type q = _state[N - 1] ^ _state[M - 1], s = q >> width - 1;
+      |                                                               ~~~~~~^~~
+RandomLib/Random.cpp: In instantiation of ‘void RandomLib::SFMT19937<UIntType, BitWidth>::Init() [with UIntType = unsigned int; unsigned int BitWidth = 32]’:
+RandomLib/Random.cpp:1138:18:   required from here
+RandomLib/Random.cpp:694:29: warning: suggest parentheses around arithmetic in operand of ‘^’ [-Wparentheses]
+  694 |     u32 inner = _state.u[0] & PARITY0 ^ _state.u[1] & PARITY1 ^
+      |                 ~~~~~~~~~~~~^~~~~~~~~
+RandomLib/Random.cpp:695:19: warning: suggest parentheses around arithmetic in operand of ‘^’ [-Wparentheses]
+  695 |       _state.u[2] & PARITY2 ^ _state.u[3] & PARITY3;
+      |       ~~~~~~~~~~~~^~~~~~~~~
+RandomLib/Random.cpp:695:43: warning: suggest parentheses around arithmetic in operand of ‘^’ [-Wparentheses]
+  695 |       _state.u[2] & PARITY2 ^ _state.u[3] & PARITY3;
+      |                               ~~~~~~~~~~~~^~~~~~~~~
+RandomLib/Random.cpp: In instantiation of ‘void RandomLib::SFMT19937<UIntType, BitWidth>::Init() [with UIntType = long long unsigned int; unsigned int BitWidth = 64]’:
+RandomLib/Random.cpp:1139:18:   required from here
+RandomLib/Random.cpp:694:29: warning: suggest parentheses around arithmetic in operand of ‘^’ [-Wparentheses]
+  694 |     u32 inner = _state.u[0] & PARITY0 ^ _state.u[1] & PARITY1 ^
+      |                 ~~~~~~~~~~~~^~~~~~~~~
+RandomLib/Random.cpp:695:19: warning: suggest parentheses around arithmetic in operand of ‘^’ [-Wparentheses]
+  695 |       _state.u[2] & PARITY2 ^ _state.u[3] & PARITY3;
+      |       ~~~~~~~~~~~~^~~~~~~~~
+RandomLib/Random.cpp:695:43: warning: suggest parentheses around arithmetic in operand of ‘^’ [-Wparentheses]
+  695 |       _state.u[2] & PARITY2 ^ _state.u[3] & PARITY3;
+      |                               ~~~~~~~~~~~~^~~~~~~~~
+In file included from ./RandomLib/Random.hpp:79,
+                 from RandomLib/Random.cpp:48:
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = unsigned int; int bits = 24; Generator = RandomLib::MT19937<unsigned int, 32>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = float; Generator = RandomLib::MT19937<unsigned int, 32>]’
+./RandomLib/RandomCanonical.hpp:1069:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+  126 |         IntType(Generator::Ran64() & RandomSeed::U64_MASK >> 64 - bits);
+      |                                                              ~~~^~~~~~
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = unsigned int; int bits = 32; Generator = RandomLib::MT19937<unsigned int, 32>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = double; Generator = RandomLib::MT19937<unsigned int, 32>]’
+./RandomLib/RandomCanonical.hpp:1069:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = long long unsigned int; int bits = 24; Generator = RandomLib::MT19937<long long unsigned int, 64>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = float; Generator = RandomLib::MT19937<long long unsigned int, 64>]’
+./RandomLib/RandomCanonical.hpp:1070:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = long long unsigned int; int bits = 53; Generator = RandomLib::MT19937<long long unsigned int, 64>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = double; Generator = RandomLib::MT19937<long long unsigned int, 64>]’
+./RandomLib/RandomCanonical.hpp:1070:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = long long unsigned int; int bits = 64; Generator = RandomLib::MT19937<long long unsigned int, 64>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = long double; Generator = RandomLib::MT19937<long long unsigned int, 64>]’
+./RandomLib/RandomCanonical.hpp:1070:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = unsigned int; int bits = 24; Generator = RandomLib::SFMT19937<unsigned int, 32>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = float; Generator = RandomLib::SFMT19937<unsigned int, 32>]’
+./RandomLib/RandomCanonical.hpp:1071:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = unsigned int; int bits = 32; Generator = RandomLib::SFMT19937<unsigned int, 32>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = double; Generator = RandomLib::SFMT19937<unsigned int, 32>]’
+./RandomLib/RandomCanonical.hpp:1071:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = long long unsigned int; int bits = 24; Generator = RandomLib::SFMT19937<long long unsigned int, 64>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = float; Generator = RandomLib::SFMT19937<long long unsigned int, 64>]’
+./RandomLib/RandomCanonical.hpp:1072:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = long long unsigned int; int bits = 53; Generator = RandomLib::SFMT19937<long long unsigned int, 64>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = double; Generator = RandomLib::SFMT19937<long long unsigned int, 64>]’
+./RandomLib/RandomCanonical.hpp:1072:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+./RandomLib/RandomCanonical.hpp: In instantiation of ‘IntType RandomLib::RandomCanonical<Generator>::Integer() [with IntType = long long unsigned int; int bits = 64; Generator = RandomLib::SFMT19937<long long unsigned int, 64>]’:
+./RandomLib/RandomCanonical.hpp:897:57:   required from ‘bool RandomLib::RandomCanonical<Generator>::ProbF(RealType) [with RealType = long double; Generator = RandomLib::SFMT19937<long long unsigned int, 64>]’
+./RandomLib/RandomCanonical.hpp:1072:3:   required from here
+./RandomLib/RandomCanonical.hpp:126:65: warning: suggest parentheses around ‘-’ inside ‘>>’ [-Wparentheses]
+RandomLib/Random.cpp:66:9: warning: ‘{anonymous}::h_rcsid’ defined but not used [-Wunused-variable]
+   66 |   char* h_rcsid[] = {
+      |         ^~~~~~~
+RandomLib/Random.cpp:65:8: warning: ‘{anonymous}::rcsid’ defined but not used [-Wunused-variable]
+   65 |   char rcsid[] = "$Id: Random.cpp 6405 2007-05-21 15:34:24Z ckarney $";
+      |        ^~~~~
+make: *** [Makefile:56: RandomLib/Random.o] Error 1
