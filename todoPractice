@@ -1,7 +1,27 @@
+VERY IMPORTANT: read about RANDOMIZATION
+
+Potentially very important: 
+	read 10.18 & .19 for intro to iterators and standard lib algo. 
+	10.19 is required for 11.8 & .9 lambdas/lambda captures.
+
 10.4	quiz#3 bubblesort 
 	quiz#4 bubblesort optimization 
 10.9	quiz#2 pointer & array arithmetic
 
 10.12	quiz#1 dynamic array allocation
 
-10.13 	quiz#1 for-each loop involing declaring an array using std::stirng_view
+10.13 	quiz#1 for-each loop involving declaring an array using std::string_view
+
+11.2 	read about function pointers (and do quizzes?)
+
+11.5 	quiz all - recursion
+
+11.7 	read about Ellipses
+
+Chap quizzes 9, 10, 11, 12
+
+12.3/.4/.5/.6/.7/.15 quizzes
+
+12.14	reread in full since was skimmed - static member functions
+
+
