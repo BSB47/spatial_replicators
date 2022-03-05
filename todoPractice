@@ -1,9 +1,15 @@
+=============reading
 VERY IMPORTANT: read about RANDOMIZATION
+12.14	reread in full since was skimmed - static member functions
+13.9 	Overloading subscript operator - skipped for now, read if need be
+
+Optional chapters (tentative): 16-Object relations, 17-Inheritance, 18-Virtual functions, 19-Template classes, 20.9-exception specification & noexcept
 
 Potentially very important: 
 	read 10.18 & .19 for intro to iterators and standard lib algo. 
 	10.19 is required for 11.8 & .9 lambdas/lambda captures.
 
+=============quizzes
 10.4	quiz#3 bubblesort 
 	quiz#4 bubblesort optimization 
 10.9	quiz#2 pointer & array arithmetic
@@ -22,8 +28,3 @@ Chap quizzes 9, 10, 11, 12
 
 12.3/.4/.5/.6/.7/.15 quizzes
 13.2/.4/.7/.10 quizzes
-
-12.14	reread in full since was skimmed - static member functions
-13.9 	Overloading subscript operator - skipped for now, read if need be
-
-
