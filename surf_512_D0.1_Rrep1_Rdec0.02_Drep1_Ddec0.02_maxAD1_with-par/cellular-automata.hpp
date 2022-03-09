@@ -6,7 +6,7 @@
   ------------------------------------------------------------
   Constructer:
 
-  It has to parameters.
+  It has two parameters.
 
   nrow: the size of vertical dimension.
   ncol: the size of horizontal dimension.
@@ -41,6 +41,7 @@
   taken to be wrapped (toroidal).
 
   neigh_fix(row,col,nei): 
+
 
   It is the same as neigh_wrap(), except that the
   boundaries are taken to be fixed; i.e. it returns an

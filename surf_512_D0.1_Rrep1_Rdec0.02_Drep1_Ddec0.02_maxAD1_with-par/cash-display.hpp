@@ -66,7 +66,7 @@ namespace CashColor{
 class CashDisplay{
 
   /* This is used to assert that there is no other instantiation of this
-     object in the same rung of the program. This is necessary because
+     object in the same run of the program. This is necessary because
      of the design of CASH */
   static bool no_other_instantiation;
   
