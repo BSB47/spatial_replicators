@@ -4,8 +4,11 @@
 #ifndef NEWCA_H
 #define NEWCA_H
 
-class newca {
+class newCA {
 private:
+  const unsigned nrow;
+  const unsigned ncol;
+
   CA2D<Molecule> plane;
 
   enum cashColors {
@@ -15,8 +18,9 @@ private:
   };
 
 public:
-  newca(const unsigned nrow, const unsigned ncol);
-  ~newca();
+  newCA(const unsigned a_nrow, const unsigned a_ncol);
+
+  ~newCA();
 };
 
 #endif

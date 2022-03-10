@@ -69,9 +69,9 @@
 template <class T> class CA2D {
  
 private:
-  unsigned nrow;
-  unsigned ncol;
-  unsigned ncol2;
+  unsigned nrow{};
+  unsigned ncol{};
+  unsigned ncol2{};
   
   /* "cells" is an array of Cells. Each cell contains an
      automaton. */

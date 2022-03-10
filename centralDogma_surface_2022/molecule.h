@@ -44,6 +44,7 @@ public:
 
   const TypeReplicator &getTypeReplicator() { return m_typeRep; }
   int getCor() { return m_cor; }
+  void setTypeRep(TypeReplicator &myType) { m_typeRep = myType; }
 };
 
 #endif

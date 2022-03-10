@@ -14,29 +14,6 @@ std::mt19937 twister{ss};
 }; // namespace DiceRoller
 
 void singleRun() {
-  std::vector<CashPanelInfo> panel_info{
-      1}; // 1 panel for visualization of the CA.
-  int win_row{Para::sys_nrow + 2};
-  int win_col{Para::sys_ncol + 2};
-  panel_info[0].n_row = Para::sys_nrow;
-  panel_info[0].n_col = Para::sys_ncol;
-  panel_info[0].o_row = Para::cash_margin;
-  panel_info[0].o_col = Para::cash_margin;
-
-  CashDisplay *display_p;
-  display_p = new CashDisplay(win_row, win_col, panel_info);
-
-  display_p->color_rgb(0, 0, 0, 0);
-  display_p->color_rgb(1, 255, 255, 255);
-  display_p->color_rgb(2, 20, 20, 20);
-  display_p->color_rgb(3, 255, 255, 255);
-  display_p->color_rgb(4, 0, 0, 255);     // blue
-  display_p->color_rgb(5, 0, 200, 0);     // dark green
-  display_p->color_rgb(6, 255, 0, 0);     // red
-  display_p->color_rgb(7, 188, 143, 143); // brown
-  display_p->color_rgb(8, 255, 255, 255);
-  display_p->color_rgb(9, 0, 0, 0);
-  display_p->color_rgb(10, 150, 150, 150);
 
   std::vector<Molecule> plane(
       Para::sys_nrow *
@@ -58,6 +35,8 @@ void singleRun() {
     }
     std::cout << plane[i].getTypeReplicator() << 'z';
   }
+
+  delete display_p;
 }
 
 int main() {
