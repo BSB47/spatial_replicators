@@ -28,8 +28,6 @@ private:
   double m_kqqq{};
   double m_kqqp{};
 
-  int m_cor{}; // This is coordinate in 1D for now.
-
   TypeReplicator m_typeRep{};
   TypeComplex m_typeComp{};
 
@@ -38,13 +36,12 @@ private:
 public:
   Molecule() = default;
 
-  Molecule(int cor, TypeReplicator typeR = s, TypeComplex typeC = free)
+  Molecule(TypeReplicator typeR, TypeComplex typeC)
       : m_kppp{1}, m_kppq{1}, m_kpqq{1}, m_kpqp{1}, m_kqpp{1}, m_kqpq{1},
-        m_kqqq{1}, m_kqqp{1}, m_cor{cor}, m_typeRep{typeR}, m_typeComp{typeC} {}
+        m_kqqq{1}, m_kqqp{1}, m_typeRep{typeR}, m_typeComp{typeC} {}
 
   const TypeReplicator &getTypeReplicator() { return m_typeRep; }
-  int getCor() { return m_cor; }
-  void setTypeRep(TypeReplicator &myType) { m_typeRep = myType; }
+  void setTypeRep(TypeReplicator myType) { m_typeRep = myType; }
 };
 
 #endif
