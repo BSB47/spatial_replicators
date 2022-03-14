@@ -5,7 +5,7 @@ MPEG-1 Sequence, 25 frames/sec
 -         /* name of non intra quant matrix file ('-': default matrix) */ 
 /dev/null /* name of statistics file ('-': stdout ) */ 
 2         /* input picture file format: 0=*.Y,*.U,*.V, 1=*.yuv, 2=*.ppm */  
-0        /* number of frames */ 
+1        /* number of frames */ 
 0         /* number of first frame */ 
 00:00:00:00 /* timecode of first frame */ 
 12        /* N (# of frames in GOP) */ 

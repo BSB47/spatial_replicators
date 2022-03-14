@@ -19,7 +19,7 @@ x11.o
 #CCOPT = -O0 -ggdb -Wall -DTBB_USE_DEBUG# For debagging.
 #CCOPT = -O3 -Wall -Winline  --param inline-unit-growth=150 # For weak debagging
 COPT = -O3 -Wall -DNDEBUG # Most optimized.
-CCOPT = -g -std=c++17 -O3 -Wall -DNDEBUG # Most optimized.
+CCOPT = -ggdb -std=c++17 -O3 -Wall -DNDEBUG # Most optimized.
 #CCOPT = -O3 -pg -Wall -Winline --param large-function-growth=450 --param inline-unit-growth=150 -DNDEBUG # For profiling
 
 #CCOPT = -O3 -Wall -Winline -finline-limit=20000 --param inline-unit-growth=5000 --param large-function-growth=60000 -DNDEBUG # Most optimized.

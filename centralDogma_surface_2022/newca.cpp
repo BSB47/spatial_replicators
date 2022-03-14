@@ -2,6 +2,7 @@
 #include "cash-display.hpp"
 #include "cash.h"
 #include "molecule.h"
+#include "para.h"
 #include "random.h"
 
 #include <iostream>
@@ -25,7 +26,12 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
       /* std::cout << plane.cell(row, col).getTypeReplicator() << ' '; tested,
        * creation and population of grid/cells seems to work. However, seems to
        * require inclusion of newCA.cpp in testCA.cpp (Why? Would we have to do
-       * this for main.cpp?)*/
+       * this for main.cpp?) -- RESOLVED By using inline variables in random.h*/
+    }
+  }
+  for (unsigned row = 0; row < 10; row++) {
+    for (unsigned col = 0; col < 10; col++) {
+      std::cout << plane.cell(row, col).getTypeReplicator() << ' ';
     }
   }
 
@@ -49,6 +55,7 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
 void newCA::visualize() {
   plane_to_display();
   display_p->draw_window();
+  display_p->draw_png();
 }
 
 void newCA::plane_to_display() {
@@ -61,7 +68,7 @@ void newCA::plane_to_display() {
       case Molecule::q:
         display_p->put_pixel(1, row, col, red);
         break;
-      default:
+      case Molecule::s:
         display_p->put_pixel(1, row, col, white);
         break;
       }
@@ -69,7 +76,30 @@ void newCA::plane_to_display() {
   }
 }
 
+void newCA::update_self_replication() {
+  unsigned row{};
+  unsigned col{};
+  for (int i{0}; i < Para::grid_size; i++) {
+    row = DiceRoller::randomRowOrCol(DiceRoller::twister);
+    col = DiceRoller::randomRowOrCol(DiceRoller::twister);
+
+    /* If some replicator is non-s, choose a neighbour at random; then change
+     * this neighbour's type to be the same as the chosen
+     * replicator's. */
+    if (plane.cell(row, col).getTypeReplicator() != Molecule::s) {
+      Molecule &someNei{plane.neigh_wrap(
+          row, col, DiceRoller::randomNei(DiceRoller::twister))};
+      if (someNei.getTypeReplicator() == Molecule::s) {
+        someNei.setTypeRep(plane.cell(row, col).getTypeReplicator());
+      }
+      /* else do nothing */
+    } else
+      continue;
+  }
+}
+
 newCA::~newCA() {
   if (display_p)
     delete display_p;
+  display_p = nullptr;
 }

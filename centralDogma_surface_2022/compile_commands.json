@@ -1,1 +1,278 @@
-[]
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "arithmetic.o",
+      "arithmetic.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/arithmetic.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/arithmetic.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "basic.o",
+      "basic.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/basic.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/basic.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "color.o",
+      "color.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/color.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/color.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "filter.o",
+      "filter.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/filter.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/filter.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "io.o",
+      "io.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/io.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/io.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "logical.o",
+      "logical.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/logical.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/logical.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "margolus.o",
+      "margolus.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/margolus.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/margolus.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "movie.o",
+      "movie.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/movie.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/movie.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "neighbors.o",
+      "neighbors.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/neighbors.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/neighbors.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "noise.o",
+      "noise.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/noise.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/noise.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "png.o",
+      "png.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/png.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/png.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "ps.o",
+      "ps.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/ps.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/ps.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "random.o",
+      "random.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/random.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/random.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "shift.o",
+      "shift.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/shift.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/shift.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "x11.o",
+      "x11.c"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/x11.c",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/x11.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-ggdb",
+      "-std=c++17",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "cash-display.o",
+      "cash-display.cpp"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/cash-display.cpp",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/cash-display.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-ggdb",
+      "-std=c++17",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "main.o",
+      "main.cpp"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/main.cpp",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-ggdb",
+      "-std=c++17",
+      "-O3",
+      "-Wall",
+      "-DNDEBUG",
+      "-o",
+      "newca.o",
+      "newca.cpp"
+    ],
+    "directory": "/home/frank/Code/source_nobuto/centralDogma_surface_2022",
+    "file": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/newca.cpp",
+    "output": "/home/frank/Code/source_nobuto/centralDogma_surface_2022/newca.o"
+  }
+]

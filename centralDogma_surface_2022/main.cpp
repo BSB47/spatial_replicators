@@ -10,7 +10,14 @@
 
 void singleRun() {
   newCA randomizedGrid(Para::sys_nrow, Para::sys_ncol);
-  randomizedGrid.visualize();
+  randomizedGrid.visualize(); // double free error from this call
+  randomizedGrid.update_self_replication();
+  char kill{};
+  std::cout << "type q+enter to quit: ";
+  std::cin >> kill;
+  if (kill == 'q') {
+    std::cout << "display_p is dead! quitting now...";
+  }
 }
 
 int main() {

@@ -22,8 +22,9 @@ private:
 
 public:
   newCA(const unsigned a_nrow, const unsigned a_ncol);
-  void visualize();
-  void plane_to_display();
+  void visualize();        // initializing and opening window/png
+  void plane_to_display(); // letting display_p put pixels into plane
+  void update_self_replication();
 
   ~newCA();
 };
