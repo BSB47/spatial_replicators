@@ -12,7 +12,7 @@ private:
 
   CA2D<Molecule> plane;
 
-  CashDisplay *display_p{};
+  CashDisplay *display_p{nullptr};
 
   enum cashColors {
     blue,  // p
