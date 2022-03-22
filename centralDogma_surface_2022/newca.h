@@ -20,10 +20,16 @@ private:
     white, // s
   };
 
+  enum Panels {
+    CA,
+    proportion_p,
+  };
+
 public:
   newCA(const unsigned a_nrow, const unsigned a_ncol);
-  void visualize();        // initializing and opening window/png
-  void plane_to_display(); // letting display_p put pixels into plane
+  void visualize(const long t); // initializing and opening window/png
+  void plane_to_display();      // letting display_p put pixels into plane
+  void decayRoll(Molecule &mole);
   void update_self_replication();
 
   ~newCA();

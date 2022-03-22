@@ -19,7 +19,7 @@ x11.o
 #CCOPT = -O0 -ggdb -Wall -DTBB_USE_DEBUG# For debagging.
 #CCOPT = -O3 -Wall -Winline  --param inline-unit-growth=150 # For weak debagging
 COPT = -O3 -Wall -DNDEBUG # Most optimized.
-CCOPT = -ggdb -std=c++17 -O3 -Wall -DNDEBUG # Most optimized.
+CCOPT = -ggdb -std=c++17 -O1 -Wall #-DNDEBUG Most optimized.
 #CCOPT = -O3 -pg -Wall -Winline --param large-function-growth=450 --param inline-unit-growth=150 -DNDEBUG # For profiling
 
 #CCOPT = -O3 -Wall -Winline -finline-limit=20000 --param inline-unit-growth=5000 --param large-function-growth=60000 -DNDEBUG # Most optimized.
@@ -45,9 +45,9 @@ $(OBJCASH): Makefile cash.h
 
 $(OBJMAIN): Makefile
 main.o: molecule.h newca.h para.h random.h
-newca.o: newca.h cash-display.hpp cash.h molecule.h random.h
+newca.o: newca.h cash-display.hpp cash.h molecule.h para.h random.h
 cash-display.o: cash-display.hpp cash.h assert.hpp
-random.o: random.h
+random.o: random.h para.h
 
 #CASH sources
 C_SOURCE = $(addsuffix .c, $(basename $(OBJCASH)))
