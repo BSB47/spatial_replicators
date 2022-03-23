@@ -4,6 +4,7 @@
 #include "random.h"
 
 #include <cassert>
+#include <fstream> //debug density counter
 #include <iostream>
 #include <iterator>
 #include <random>
@@ -15,7 +16,11 @@ void singleRun() {
 
   for (long t{init_time}; t <= Para::max_time; t++) {
     randomizedGrid.visualize(t);
+    randomizedGrid.writeFile(t);
     randomizedGrid.update_self_replication();
+    /* if (t == 50) { */
+    /*   randomizedGrid.testDensity(t); */
+    /* } */
   }
   char kill{};
   std::cout << "type q+enter to quit: "; // Needs to go!

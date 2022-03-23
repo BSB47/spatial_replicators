@@ -6,6 +6,7 @@
 #include "random.h"
 
 #include <cassert>
+#include <fstream>
 #include <iostream>
 #include <random>
 
@@ -16,9 +17,11 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
       switch (DiceRoller::typeInitializer(DiceRoller::twister)) {
       case 1:
         plane.cell(row, col).setTypeRep(Molecule::p);
+        ++pqDensity;
         break;
       case 2:
         plane.cell(row, col).setTypeRep(Molecule::q);
+        ++pqDensity;
         break;
       default:
         plane.cell(row, col).setTypeRep(Molecule::s);
@@ -30,6 +33,7 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
        * this for main.cpp?) -- RESOLVED By using inline variables in random.h*/
     }
   }
+  /* std::cout << "pq denstiy is currently: " << pqDensity << std::endl; */
 
   std::vector<CashPanelInfo> panel_info(1);
   panel_info[CA].n_row = nrow;
@@ -57,6 +61,35 @@ void newCA::visualize(const long t) {
     return;
 }
 
+void newCA::writeFile(const long t) {
+  if (!output.is_open()) {
+    output.open("output.txt", std::ios::app);
+    /* std::cout << t << "opening output.txt" << std::endl; */
+  }
+
+  if (!output) {
+    std::cerr << "Could not access output.txt\n";
+  }
+
+  output << t * Para::alpha << ' '
+         << static_cast<double>(pqDensity) / Para::grid_size << '\n';
+  output.close();
+}
+
+/* void newCA::testDensity(const long t) { */
+/*   std::uint32_t testDensity{}; */
+/*   for (unsigned row{1}; row <= Para::sys_nrow; row++) { */
+/*     for (unsigned col{1}; col <= Para::sys_ncol; col++) { */
+/*       if (plane.cell(row, col).getTypeReplicator() != Molecule::s) */
+/*         ++testDensity; */
+/*     } */
+/*   } */
+/*   if (!output.is_open()) { */
+/*     output.open("output.txt", std::ios::app); */
+/*     output << "testing now!!! " << t << '\t' << testDensity; */
+/*   } */
+/* } */
+
 void newCA::plane_to_display() { // Does not paint display! Just transports
                                  // plane data to it.
   for (unsigned row{1}; row <= nrow; row++) {
@@ -77,10 +110,12 @@ void newCA::plane_to_display() { // Does not paint display! Just transports
 }
 
 void newCA::decayRoll(Molecule &mole) {
-  assert(Para::decay_probability < 1);
+  assert((Para::decay_probability * Para::alpha) < 1);
   if (DiceRoller::probabilityGen(DiceRoller::twister) <=
-      Para::decay_probability)
+      (Para::decay_probability * Para::alpha)) {
     mole.setTypeRep(Molecule::s);
+    --pqDensity;
+  }
 }
 
 void newCA::update_self_replication() {
