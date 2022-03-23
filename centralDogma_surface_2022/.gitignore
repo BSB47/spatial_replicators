@@ -1,0 +1,5 @@
+#ignore object files and binaries
+**.o
+**/cash_movie
+CenSur
+vgcore.**
