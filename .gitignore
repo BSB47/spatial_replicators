@@ -1,10 +1,10 @@
 #ignore object files and binaries
 **.o
-**/cash_movie
-**/test
-**/output
+**/cash_movie/
+**/test/
+**/output/
 **/surf_512_D0.1_Rrep1_Rdec0.02_Drep1_Ddec0.02_maxAD1_with-par/
 **/centralDogma_surface_2022/.R*
-vgcore.**
+vgcore.*
 CenSur
 compile_commands.json
