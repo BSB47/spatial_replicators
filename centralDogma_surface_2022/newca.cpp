@@ -108,17 +108,21 @@ void newCA::plane_to_display() { // Does not paint display! Just transports
     }
   }
 }
+void newCA::diffuse(Molecule &mole, unsigned row, unsigned col) {
+  Molecule &someNei{
+      plane.neigh_wrap(row, col, DiceRoller::randomNei(DiceRoller::twister))};
 
-void newCA::decayRoll(Molecule &mole) {
-  assert((Para::decay_probability * Para::alpha) < 1);
-  if (DiceRoller::probabilityGen(DiceRoller::twister) <=
-      (Para::decay_probability * Para::alpha)) {
-    mole.setTypeRep(Molecule::s);
-    --pqDensity;
-  }
+  const Molecule &tmp{someNei}; // make a copy of chosen nei
+  someNei = mole;
+  mole = tmp;
 }
 
-void newCA::update_self_replication() {
+void newCA::decay(Molecule &mole) {
+  mole.setTypeRep(Molecule::s);
+  --pqDensity;
+}
+
+void newCA::update_squares() {
   unsigned row{};
   unsigned col{};
 
@@ -127,21 +131,31 @@ void newCA::update_self_replication() {
     col = DiceRoller::randomRowOrCol(DiceRoller::twister);
 
     /* Molecule *mole{&(plane.cell(row, col))}; */
-    Molecule &mole{(plane.cell(row, col))};
+    Molecule mole{(plane.cell(row, col))};
     auto mole_type{mole.getTypeReplicator()};
+    const double myFate{DiceRoller::probabilityGen(DiceRoller::twister)};
 
-    /* If some replicator is non-s, choose a neighbour at random; then change
-     * this neighbour's type to be the same as the chosen
-     * replicator's. */
     if (mole_type != Molecule::s) {
-      decayRoll(mole);
-    } else
-      continue;
+      if (myFate <= (Para::alpha * Para::decay_probability)) {
+        decay(mole);
+        continue;
+      } else if (myFate <= (Para::alpha * (Para::decay_probability +
+                                           Para::diffusion_probability))) {
+        diffuse(mole, row, col);
+        continue;
+      } else
+        continue;
+    }
+
+    /* If chosen replicator is non-s, choose a neighbour at random; then
+     * change this neighbour's type to be the same as the chosen
+     * replicator's. */
     /* Molecule &someNei{plane.neigh_wrap( */
     /*     row, col, DiceRoller::randomNei(DiceRoller::twister))}; */
     /* if (someNei.getTypeReplicator() == Molecule::s) { */
     /*   someNei.setTypeRep(mole_type); */
     /* else do nothing */
+    /* } */
   }
 }
 

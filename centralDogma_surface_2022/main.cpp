@@ -17,7 +17,7 @@ void singleRun() {
   for (long t{init_time}; t <= Para::max_time; t++) {
     randomizedGrid.visualize(t);
     randomizedGrid.writeFile(t);
-    randomizedGrid.update_self_replication();
+    randomizedGrid.update_squares();
     /* if (t == 50) { */
     /*   randomizedGrid.testDensity(t); */
     /* } */

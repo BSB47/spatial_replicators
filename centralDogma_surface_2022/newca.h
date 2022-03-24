@@ -40,8 +40,9 @@ public:
   void plane_to_display(); // letting display_p put pixels into plane
 
   /* actual simulation */
-  void decayRoll(Molecule &mole);
-  void update_self_replication();
+  void decay(Molecule &mole);
+  void diffuse(Molecule &mole, unsigned row, unsigned col);
+  void update_squares();
 
   ~newCA();
 };
