@@ -63,7 +63,7 @@ void newCA::visualize(const long t) {
 
 void newCA::writeFile(const long t) {
   if (!output.is_open()) {
-    output.open("output.txt", std::ios::app);
+    output.open("output/output.txt", std::ios::app);
     /* std::cout << t << "opening output.txt" << std::endl; */
   }
 
@@ -76,19 +76,22 @@ void newCA::writeFile(const long t) {
   output.close();
 }
 
-/* void newCA::testDensity(const long t) { */
-/*   std::uint32_t testDensity{}; */
-/*   for (unsigned row{1}; row <= Para::sys_nrow; row++) { */
-/*     for (unsigned col{1}; col <= Para::sys_ncol; col++) { */
-/*       if (plane.cell(row, col).getTypeReplicator() != Molecule::s) */
-/*         ++testDensity; */
-/*     } */
-/*   } */
-/*   if (!output.is_open()) { */
-/*     output.open("output.txt", std::ios::app); */
-/*     output << "testing now!!! " << t << '\t' << testDensity; */
-/*   } */
-/* } */
+void newCA::testDensity(const long t) {
+  std::uint32_t testDensity{};
+  for (unsigned row{1}; row <= Para::sys_nrow; row++) {
+    for (unsigned col{1}; col <= Para::sys_ncol; col++) {
+      if (plane.cell(row, col).getTypeReplicator() != Molecule::s)
+        ++testDensity;
+    }
+  }
+  /* if (!output.is_open()) { */
+  /*   output.open("output.txt", std::ios::app); */
+  /*   output << "testing now!!! " << t << '\t' << testDensity; */
+  /* } */
+  std::cout << testDensity << std::endl;
+}
+
+void newCA::printDensity() { std::cout << pqDensity << std::endl; }
 
 void newCA::plane_to_display() { // Does not paint display! Just transports
                                  // plane data to it.
@@ -108,6 +111,12 @@ void newCA::plane_to_display() { // Does not paint display! Just transports
     }
   }
 }
+
+void newCA::decay(Molecule &mole) {
+  mole.setTypeRep(Molecule::s);
+  --pqDensity;
+}
+
 void newCA::diffuse(Molecule &mole, unsigned row, unsigned col) {
   Molecule &someNei{
       plane.neigh_wrap(row, col, DiceRoller::randomNei(DiceRoller::twister))};
@@ -117,11 +126,7 @@ void newCA::diffuse(Molecule &mole, unsigned row, unsigned col) {
   mole = tmp;
 }
 
-void newCA::decay(Molecule &mole) {
-  mole.setTypeRep(Molecule::s);
-  --pqDensity;
-}
-
+void newCA::complexFormation(Molecule &mole) {}
 void newCA::update_squares() {
   unsigned row{};
   unsigned col{};
@@ -131,36 +136,38 @@ void newCA::update_squares() {
     col = DiceRoller::randomRowOrCol(DiceRoller::twister);
 
     /* Molecule *mole{&(plane.cell(row, col))}; */
-    Molecule mole{(plane.cell(row, col))};
+    Molecule &mole{(plane.cell(row, col))};
     auto mole_type{mole.getTypeReplicator()};
     const double myFate{DiceRoller::probabilityGen(DiceRoller::twister)};
 
     if (mole_type != Molecule::s) {
       if (myFate <= (Para::alpha * Para::decay_probability)) {
         decay(mole);
-        continue;
       } else if (myFate <= (Para::alpha * (Para::decay_probability +
                                            Para::diffusion_probability))) {
         diffuse(mole, row, col);
-        continue;
-      } else
-        continue;
-    }
+      } else {
+        const Molecule &complexNei{plane.neigh_wrap(
+            row, col, DiceRoller::randomNei(DiceRoller::twister))};
+        auto nei_type{complexNei.getTypeReplicator()};
+        switch (mole_type) {
+        case 0:
+          switch (nei_type) { case 0: }
 
-    /* If chosen replicator is non-s, choose a neighbour at random; then
-     * change this neighbour's type to be the same as the chosen
-     * replicator's. */
-    /* Molecule &someNei{plane.neigh_wrap( */
-    /*     row, col, DiceRoller::randomNei(DiceRoller::twister))}; */
-    /* if (someNei.getTypeReplicator() == Molecule::s) { */
-    /*   someNei.setTypeRep(mole_type); */
-    /* else do nothing */
-    /* } */
-  }
-}
+          /* If chosen replicator is non-s, choose a neighbour at random; then
+           * change this neighbour's type to be the same as the chosen
+           * replicator's. */
+          /* Molecule &someNei{plane.neigh_wrap( */
+          /*     row, col, DiceRoller::randomNei(DiceRoller::twister))}; */
+          /* if (someNei.getTypeReplicator() == Molecule::s) { */
+          /*   someNei.setTypeRep(mole_type); */
+          /* else do nothing */
+          /* } */
+        }
+      }
 
-newCA::~newCA() {
-  if (display_p)
-    delete display_p;
-  display_p = nullptr;
-}
+      newCA::~newCA() {
+        if (display_p)
+          delete display_p;
+        display_p = nullptr;
+      }

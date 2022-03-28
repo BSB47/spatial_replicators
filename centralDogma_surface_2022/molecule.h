@@ -40,7 +40,7 @@ public:
       : m_kppp{1}, m_kppq{1}, m_kpqq{1}, m_kpqp{1}, m_kqpp{1}, m_kqpq{1},
         m_kqqq{1}, m_kqqp{1}, m_typeRep{typeR}, m_typeComp{typeC} {}
 
-  const TypeReplicator &getTypeReplicator() { return m_typeRep; }
+  const TypeReplicator &getTypeReplicator() const { return m_typeRep; }
   void setTypeRep(TypeReplicator myType) { m_typeRep = myType; }
 };
 

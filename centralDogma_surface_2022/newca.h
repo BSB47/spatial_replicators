@@ -17,7 +17,7 @@ private:
 
   CashDisplay *display_p{nullptr};
 
-  std::ofstream output{"output.txt"};
+  std::ofstream output{"output/output.txt"};
 
   enum cashColors {
     blue,  // p
@@ -35,13 +35,16 @@ public:
   newCA(const unsigned a_nrow, const unsigned a_ncol);
   void visualize(const long t); // initializing and opening window/png
   void writeFile(const long t); // writing density of replicators to a file
-  /* void testDensity(const long t); function to test if the pqDensity
+  void testDensity(const long t);
+  void printDensity();
+  /* function to test if the pqDensity
    * incre-/decrements are working.*/
   void plane_to_display(); // letting display_p put pixels into plane
 
   /* actual simulation */
   void decay(Molecule &mole);
   void diffuse(Molecule &mole, unsigned row, unsigned col);
+  void complexFormation(Molecule &mole);
   void update_squares();
 
   ~newCA();

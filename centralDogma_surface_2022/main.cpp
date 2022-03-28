@@ -15,6 +15,8 @@ void singleRun() {
   newCA randomizedGrid(Para::sys_nrow, Para::sys_ncol);
 
   for (long t{init_time}; t <= Para::max_time; t++) {
+    /* randomizedGrid.testDensity(t); */
+    /* randomizedGrid.printDensity(); */
     randomizedGrid.visualize(t);
     randomizedGrid.writeFile(t);
     randomizedGrid.update_squares();
