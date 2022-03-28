@@ -150,9 +150,15 @@ void newCA::update_squares() {
         const Molecule &complexNei{plane.neigh_wrap(
             row, col, DiceRoller::randomNei(DiceRoller::twister))};
         auto nei_type{complexNei.getTypeReplicator()};
-        switch (mole_type) {
+        const double determineRole{
+            DiceRoller::probabilityGen(DiceRoller::twister)};
+
+        switch (mole_type) { // 0=p, 1=q, 2=s
         case 0:
-          switch (nei_type) { case 0: }
+          switch (nei_type) {
+          case 0:
+            if (determineRole <= (Para::alpha * mole
+          }
 
           /* If chosen replicator is non-s, choose a neighbour at random; then
            * change this neighbour's type to be the same as the chosen

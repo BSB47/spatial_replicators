@@ -31,6 +31,8 @@ private:
   TypeReplicator m_typeRep{};
   TypeComplex m_typeComp{};
 
+  Molecule *bon_nei;
+
   double m_mutation_probability{};
 
 public:
@@ -42,6 +44,8 @@ public:
 
   const TypeReplicator &getTypeReplicator() const { return m_typeRep; }
   void setTypeRep(TypeReplicator myType) { m_typeRep = myType; }
+
+  friend void newCA::update_squares();
 };
 
 #endif
