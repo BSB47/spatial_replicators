@@ -14,6 +14,7 @@ inline constexpr double alpha{
     0.999 / (decay_probability +
              diffusion_probability)}; // alpha * d needs to be as large as
                                       // possible while being < 1.
+inline constexpr double beta{0.5};
 inline constexpr long display_interval{1};
 inline constexpr long max_time{1000};
 } // namespace Para

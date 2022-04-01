@@ -47,12 +47,12 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
   display_p->color_rgb(blue, 0, 0, 255);
   display_p->color_rgb(red, 255, 0, 0);
   display_p->color_rgb(white, 255, 255, 255);
-
-  display_p->open_window();
-  display_p->open_png();
 }
 
 void newCA::visualize(const long t) {
+  display_p->open_window();
+  display_p->open_png();
+
   if (t % Para::display_interval == 0) {
     plane_to_display();
     display_p->draw_window();
@@ -121,12 +121,115 @@ void newCA::diffuse(Molecule &mole, unsigned row, unsigned col) {
   Molecule &someNei{
       plane.neigh_wrap(row, col, DiceRoller::randomNei(DiceRoller::twister))};
 
-  const Molecule &tmp{someNei}; // make a copy of chosen nei
-  someNei = mole;
-  mole = tmp;
+  Molecule tmp{std::move_if_noexcept(someNei)}; // make a copy of chosen nei
+  someNei = std::move_if_noexcept(mole);
+  mole = std::move_if_noexcept(tmp);
 }
 
-void newCA::complexFormation(Molecule &mole) {}
+/* The following function returns a number which can be used to decipher if and
+what complex forms between the chosen molecule (passed by reference to this
+function) and a molecule in its neighbourhood (randomly chosen through this
+function).
+There are 3 kinds of numbers this function can return:
+0-7: complex has formed and mole is the catalyst, someNei is the template
+100-107: complex has formed and someNei is the catalyst, mole is the template
+>=1000: complex did not form or someNei is S */
+int newCA::determineComplex(unsigned row, unsigned col, Molecule &mole,
+                            int mole_type) {
+  const double complexProb{DiceRoller::probabilityGen(DiceRoller::twister)};
+  double cumuProb{};
+
+  Molecule &someNei{
+      plane.neigh_wrap(row, col, DiceRoller::randomNei(DiceRoller::twister))};
+
+  switch (mole_type) {
+  case 0:
+    switch (someNei.getTypeReplicator()) { // if mole & someNei are both P
+    case 0:
+      for (unsigned i{0}; i <= 1; i++) {
+        cumuProb += mole.m_rateList[i];
+        if (complexProb <= cumuProb)
+          return i;
+      }
+      for (unsigned i{0}; i <= 1; i++) {
+        cumuProb += someNei.m_rateList[i];
+        if (complexProb <= cumuProb)
+          return (i + 100);
+      }
+      /* std::cout << complexProb << ' ' << cumuProb << std::endl; */
+      return 1000; // complex did not form between two P molecules
+    case 1:        // if mole is P and someNei is Q
+      for (unsigned i{2}; i <= 3; i++) {
+        cumuProb += mole.m_rateList[i];
+        if (complexProb <= cumuProb)
+          return i;
+      }
+      for (unsigned i{4}; i <= 5; i++) {
+        cumuProb += someNei.m_rateList[i];
+        if (complexProb <= cumuProb)
+          return (i + 100);
+      }
+      /* std::cout << complexProb << ' ' << cumuProb << std::endl; */
+      return 1001; // complex did not form between P and Q
+    default:
+      return 1005; // someNei is a S
+    }
+  case 1:
+    switch (someNei.getTypeReplicator()) { // if mole is Q and someNei is P
+    case 0:
+      for (unsigned i{4}; i <= 5; i++) {
+        cumuProb += mole.m_rateList[i];
+        if (complexProb <= cumuProb)
+          return i;
+      }
+      for (unsigned i{2}; i <= 3; i++) {
+        cumuProb += someNei.m_rateList[i];
+        if (complexProb <= cumuProb)
+          return (i + 100);
+      }
+      /* std::cout << complexProb << ' ' << cumuProb << std::endl; */
+      return 1002; // complex did not form between Q and P
+    case 1:        // if both are Q
+      for (unsigned i{6}; i <= 7; i++) {
+        cumuProb += mole.m_rateList[i];
+        if (complexProb <= cumuProb)
+          return i;
+      }
+      for (unsigned i{6}; i <= 7; i++) {
+        cumuProb += someNei.m_rateList[i];
+        if (complexProb <= cumuProb)
+          return (i + 100);
+      }
+      /* std::cout << complexProb << ' ' << cumuProb << std::endl; */
+      return 1003; // complex did not form between 2 Qs
+    default:
+      return 1005; // someNei is a S
+    }
+  default:
+    return 1010; // something is broken
+
+    /* switch (mole_type) { // 0=p, 1=q, 2=s */
+    /* case 0: */
+    /*   switch (someNei.getTypeReplicator()) { // 0=p, 1=q, 2=s */
+    /*   case 0: // p1p2, where p1 is mole and the catalyst */
+    /*     cumuProb += Para::beta * mole.m_kppp; */
+    /*     if (complexProb <= cumuProb && mole.m_typeComp == 0 && */
+    /*         someNei.m_typeComp == 0) { */
+    /*       mole.m_typeComp = Molecule::cata; */
+    /*       someNei.m_typeComp = Molecule::temp; */
+    /*       someNei.m_repOutcome = Molecule::p; */
+    /*       return; */
+    /*     } else if (complexProb <= (cumuProb + mole.m_kppq) && */
+    /*                mole.m_typeComp == 0 && someNei.m_typeComp == 0) { */
+    /*       mole.m_typeComp = Molecule::cata; */
+    /*       someNei.m_typeComp = Molecule::temp; */
+    /*       someNei.m_repOutcome = Molecule::q; */
+    /*     } */
+    /*   } */
+    /* } */
+  }
+}
+
 void newCA::update_squares() {
   unsigned row{};
   unsigned col{};
@@ -147,33 +250,24 @@ void newCA::update_squares() {
                                            Para::diffusion_probability))) {
         diffuse(mole, row, col);
       } else {
-        const Molecule &complexNei{plane.neigh_wrap(
-            row, col, DiceRoller::randomNei(DiceRoller::twister))};
-        auto nei_type{complexNei.getTypeReplicator()};
-        const double determineRole{
-            DiceRoller::probabilityGen(DiceRoller::twister)};
-
-        switch (mole_type) { // 0=p, 1=q, 2=s
-        case 0:
-          switch (nei_type) {
-          case 0:
-            if (determineRole <= (Para::alpha * mole
-          }
-
-          /* If chosen replicator is non-s, choose a neighbour at random; then
-           * change this neighbour's type to be the same as the chosen
-           * replicator's. */
-          /* Molecule &someNei{plane.neigh_wrap( */
-          /*     row, col, DiceRoller::randomNei(DiceRoller::twister))}; */
-          /* if (someNei.getTypeReplicator() == Molecule::s) { */
-          /*   someNei.setTypeRep(mole_type); */
-          /* else do nothing */
-          /* } */
-        }
+        determineComplex(row, col, mole, mole_type);
       }
+    }
 
-      newCA::~newCA() {
-        if (display_p)
-          delete display_p;
-        display_p = nullptr;
-      }
+    /* If chosen replicator is non-s, choose a neighbour at random; then
+     * change this neighbour's type to be the same as the chosen
+     * replicator's. */
+    /* Molecule &someNei{plane.neigh_wrap( */
+    /*     row, col, DiceRoller::randomNei(DiceRoller::twister))}; */
+    /* if (someNei.getTypeReplicator() == Molecule::s) { */
+    /*   someNei.setTypeRep(mole_type); */
+    /* else do nothing */
+    /* } */
+  }
+}
+
+newCA::~newCA() {
+  if (display_p)
+    delete display_p;
+  display_p = nullptr;
+}

@@ -1,11 +1,12 @@
 #include "cash-display.hpp"
 #include "cellular-automata.hpp"
-#include "molecule.h"
 
 #include <fstream>
 
 #ifndef NEWCA_H
 #define NEWCA_H
+
+class Molecule;
 
 class newCA {
 private:
@@ -44,7 +45,8 @@ public:
   /* actual simulation */
   void decay(Molecule &mole);
   void diffuse(Molecule &mole, unsigned row, unsigned col);
-  void complexFormation(Molecule &mole);
+  int determineComplex(unsigned row, unsigned col, Molecule &mole,
+                       int mole_type);
   void update_squares();
 
   ~newCA();
