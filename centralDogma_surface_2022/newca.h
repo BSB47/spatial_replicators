@@ -2,6 +2,7 @@
 #include "cellular-automata.hpp"
 
 #include <fstream>
+#include <memory>
 
 #ifndef NEWCA_H
 #define NEWCA_H
@@ -14,7 +15,7 @@ private:
   const unsigned ncol{};
 
   std::uint32_t pqDensity{};
-  CA2D<Molecule> plane;
+  CA2D<std::unique_ptr<Molecule>> plane;
 
   CashDisplay *display_p{nullptr};
 
@@ -43,10 +44,10 @@ public:
   void plane_to_display(); // letting display_p put pixels into plane
 
   /* actual simulation */
-  void decay(Molecule &mole);
-  void diffuse(Molecule &mole, unsigned row, unsigned col);
-  int determineComplex(unsigned row, unsigned col, Molecule &mole,
-                       int mole_type);
+  void decay(std::unique_ptr<Molecule> &mole);
+  void diffuse(std::unique_ptr<Molecule> &mole, unsigned row, unsigned col);
+  int determineComplex(unsigned row, unsigned col,
+                       std::unique_ptr<Molecule> &mole, int mole_type);
   void update_squares();
 
   ~newCA();

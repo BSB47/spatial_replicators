@@ -8,29 +8,34 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <random>
+#include <vector>
 
 newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
     : nrow{a_nrow}, ncol{a_ncol}, plane(a_nrow, a_ncol) {
   for (unsigned row = 1; row <= nrow; row++) {
     for (unsigned col = 1; col <= ncol; col++) {
+      auto tmp{std::make_unique<Molecule>()};
+      plane.cell(row, col) = std::move(tmp);
       switch (DiceRoller::typeInitializer(DiceRoller::twister)) {
       case 1:
-        plane.cell(row, col).setTypeRep(Molecule::p);
+        plane.cell(row, col)->setTypeRep(Molecule::p);
         ++pqDensity;
         break;
       case 2:
-        plane.cell(row, col).setTypeRep(Molecule::q);
+        plane.cell(row, col)->setTypeRep(Molecule::q);
         ++pqDensity;
         break;
       default:
-        plane.cell(row, col).setTypeRep(Molecule::s);
+        plane.cell(row, col)->setTypeRep(Molecule::s);
         break;
       }
       /* std::cout << plane.cell(row, col).getTypeReplicator() << ' '; tested,
-       * creation and population of grid/cells seems to work. However, seems to
-       * require inclusion of newCA.cpp in testCA.cpp (Why? Would we have to do
-       * this for main.cpp?) -- RESOLVED By using inline variables in random.h*/
+       * creation and population of grid/cells seems to work. However, seems
+       * to require inclusion of newCA.cpp in testCA.cpp (Why? Would we have
+       * to do this for main.cpp?) -- RESOLVED By using inline variables in
+       * random.h*/
     }
   }
   /* std::cout << "pq denstiy is currently: " << pqDensity << std::endl; */
@@ -47,12 +52,11 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
   display_p->color_rgb(blue, 0, 0, 255);
   display_p->color_rgb(red, 255, 0, 0);
   display_p->color_rgb(white, 255, 255, 255);
+  display_p->open_window();
+  display_p->open_png();
 }
 
 void newCA::visualize(const long t) {
-  display_p->open_window();
-  display_p->open_png();
-
   if (t % Para::display_interval == 0) {
     plane_to_display();
     display_p->draw_window();
@@ -80,7 +84,7 @@ void newCA::testDensity(const long t) {
   std::uint32_t testDensity{};
   for (unsigned row{1}; row <= Para::sys_nrow; row++) {
     for (unsigned col{1}; col <= Para::sys_ncol; col++) {
-      if (plane.cell(row, col).getTypeReplicator() != Molecule::s)
+      if (plane.cell(row, col)->getTypeReplicator() != Molecule::s)
         ++testDensity;
     }
   }
@@ -97,7 +101,7 @@ void newCA::plane_to_display() { // Does not paint display! Just transports
                                  // plane data to it.
   for (unsigned row{1}; row <= nrow; row++) {
     for (unsigned col{1}; col <= ncol; col++) {
-      switch (plane.cell(row, col).getTypeReplicator()) {
+      switch (plane.cell(row, col)->getTypeReplicator()) {
       case Molecule::p:
         display_p->put_pixel(CA, row, col, blue);
         break;
@@ -112,18 +116,15 @@ void newCA::plane_to_display() { // Does not paint display! Just transports
   }
 }
 
-void newCA::decay(Molecule &mole) {
-  mole.setTypeRep(Molecule::s);
+void newCA::decay(std::unique_ptr<Molecule> &mole) {
+  mole->setTypeRep(Molecule::s);
   --pqDensity;
 }
 
-void newCA::diffuse(Molecule &mole, unsigned row, unsigned col) {
-  Molecule &someNei{
-      plane.neigh_wrap(row, col, DiceRoller::randomNei(DiceRoller::twister))};
-
-  Molecule tmp{std::move_if_noexcept(someNei)}; // make a copy of chosen nei
-  someNei = std::move_if_noexcept(mole);
-  mole = std::move_if_noexcept(tmp);
+void newCA::diffuse(std::unique_ptr<Molecule> &mole, unsigned row,
+                    unsigned col) {
+  mole.swap(
+      plane.neigh_wrap(row, col, DiceRoller::randomNei(DiceRoller::twister)));
 }
 
 /* The following function returns a number which can be used to decipher if and
@@ -134,25 +135,25 @@ There are 3 kinds of numbers this function can return:
 0-7: complex has formed and mole is the catalyst, someNei is the template
 100-107: complex has formed and someNei is the catalyst, mole is the template
 >=1000: complex did not form or someNei is S */
-int newCA::determineComplex(unsigned row, unsigned col, Molecule &mole,
-                            int mole_type) {
+int newCA::determineComplex(unsigned row, unsigned col,
+                            std::unique_ptr<Molecule> &mole, int mole_type) {
   const double complexProb{DiceRoller::probabilityGen(DiceRoller::twister)};
   double cumuProb{};
 
-  Molecule &someNei{
+  std::unique_ptr<Molecule> &someNei{
       plane.neigh_wrap(row, col, DiceRoller::randomNei(DiceRoller::twister))};
 
   switch (mole_type) {
   case 0:
-    switch (someNei.getTypeReplicator()) { // if mole & someNei are both P
+    switch (someNei->getTypeReplicator()) { // if mole & someNei are both P
     case 0:
       for (unsigned i{0}; i <= 1; i++) {
-        cumuProb += mole.m_rateList[i];
+        cumuProb += mole->m_rateList[i];
         if (complexProb <= cumuProb)
           return i;
       }
       for (unsigned i{0}; i <= 1; i++) {
-        cumuProb += someNei.m_rateList[i];
+        cumuProb += someNei->m_rateList[i];
         if (complexProb <= cumuProb)
           return (i + 100);
       }
@@ -160,12 +161,12 @@ int newCA::determineComplex(unsigned row, unsigned col, Molecule &mole,
       return 1000; // complex did not form between two P molecules
     case 1:        // if mole is P and someNei is Q
       for (unsigned i{2}; i <= 3; i++) {
-        cumuProb += mole.m_rateList[i];
+        cumuProb += mole->m_rateList[i];
         if (complexProb <= cumuProb)
           return i;
       }
       for (unsigned i{4}; i <= 5; i++) {
-        cumuProb += someNei.m_rateList[i];
+        cumuProb += someNei->m_rateList[i];
         if (complexProb <= cumuProb)
           return (i + 100);
       }
@@ -175,15 +176,15 @@ int newCA::determineComplex(unsigned row, unsigned col, Molecule &mole,
       return 1005; // someNei is a S
     }
   case 1:
-    switch (someNei.getTypeReplicator()) { // if mole is Q and someNei is P
+    switch (someNei->getTypeReplicator()) { // if mole is Q and someNei is P
     case 0:
       for (unsigned i{4}; i <= 5; i++) {
-        cumuProb += mole.m_rateList[i];
+        cumuProb += mole->m_rateList[i];
         if (complexProb <= cumuProb)
           return i;
       }
       for (unsigned i{2}; i <= 3; i++) {
-        cumuProb += someNei.m_rateList[i];
+        cumuProb += someNei->m_rateList[i];
         if (complexProb <= cumuProb)
           return (i + 100);
       }
@@ -191,12 +192,12 @@ int newCA::determineComplex(unsigned row, unsigned col, Molecule &mole,
       return 1002; // complex did not form between Q and P
     case 1:        // if both are Q
       for (unsigned i{6}; i <= 7; i++) {
-        cumuProb += mole.m_rateList[i];
+        cumuProb += mole->m_rateList[i];
         if (complexProb <= cumuProb)
           return i;
       }
       for (unsigned i{6}; i <= 7; i++) {
-        cumuProb += someNei.m_rateList[i];
+        cumuProb += someNei->m_rateList[i];
         if (complexProb <= cumuProb)
           return (i + 100);
       }
@@ -239,18 +240,18 @@ void newCA::update_squares() {
     col = DiceRoller::randomRowOrCol(DiceRoller::twister);
 
     /* Molecule *mole{&(plane.cell(row, col))}; */
-    Molecule &mole{(plane.cell(row, col))};
-    auto mole_type{mole.getTypeReplicator()};
+    std::unique_ptr<Molecule> &mole{(plane.cell(row, col))};
+    auto mole_type{mole->getTypeReplicator()};
     const double myFate{DiceRoller::probabilityGen(DiceRoller::twister)};
 
     if (mole_type != Molecule::s) {
       if (myFate <= (Para::alpha * Para::decay_probability)) {
-        decay(mole);
+        /* decay(mole); */
       } else if (myFate <= (Para::alpha * (Para::decay_probability +
                                            Para::diffusion_probability))) {
         diffuse(mole, row, col);
-      } else {
-        determineComplex(row, col, mole, mole_type);
+        /* } else { */
+        /* determineComplex(row, col, mole, mole_type); */
       }
     }
 

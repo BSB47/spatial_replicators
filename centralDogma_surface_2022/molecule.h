@@ -1,6 +1,8 @@
 #include "newca.h"
 #include "para.h"
 
+#include <iostream>
+
 #ifndef MOLECULE_H
 #define MOLECULE_H
 
@@ -42,29 +44,34 @@ private:
   double m_mutation_probability{};
 
 public:
-  Molecule() = default;
+  Molecule() { std::cout << "I'm born\n"; }
 
   Molecule(TypeReplicator typeR, TypeComplex typeC)
-      : m_typeRep{typeR}, m_typeComp{typeC} {}
-
-  Molecule(Molecule &&a) noexcept : m_ratePtr(a.m_ratePtr) {
-    a.m_ratePtr = nullptr;
+      : m_typeRep{typeR}, m_typeComp{typeC} {
+    std::cout << "I'm born\n";
   }
 
-  Molecule &operator=(Molecule &&a) noexcept {
-    if (&a == this) // self-assignment check
-      return *this;
+  ~Molecule() { std::cout << "I'm dead"; }
 
-    m_ratePtr = a.m_ratePtr;
-    a.m_ratePtr = nullptr;
+  /* Molecule(Molecule &&a) noexcept : m_ratePtr(a.m_ratePtr) { */
+  /*   a.m_ratePtr = nullptr; */
+  /* } */
 
-    return *this;
-  }
+  /* Molecule &operator=(Molecule &&a) noexcept { */
+  /*   if (&a == this) // self-assignment check */
+  /*     return *this; */
+
+  /* m_ratePtr = a.m_ratePtr; */
+  /* a.m_ratePtr = nullptr; */
+
+  /* return *this; */
+  /* } */
 
   const TypeReplicator &getTypeReplicator() const { return m_typeRep; }
   void setTypeRep(TypeReplicator myType) { m_typeRep = myType; }
 
-  friend int newCA::determineComplex(unsigned row, unsigned col, Molecule &mole,
+  friend int newCA::determineComplex(unsigned row, unsigned col,
+                                     std::unique_ptr<Molecule> &mole,
                                      int mole_type);
 };
 

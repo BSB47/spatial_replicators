@@ -7,7 +7,9 @@
 #include <fstream> //debug density counter
 #include <iostream>
 #include <iterator>
+#include <memory>
 #include <random>
+#include <utility>
 #include <vector>
 
 void singleRun() {
@@ -39,5 +41,5 @@ int main() {
   /* std::cout << tester.getTypeReplicator(); */
   /* testguy.decayRoll(tester); */
   /* std::cout << tester.getTypeReplicator(); */
-  /* return 0; */
+  return 0;
 }
