@@ -7,7 +7,9 @@
 #include <fstream> //debug density counter
 #include <iostream>
 #include <iterator>
+#include <memory>
 #include <random>
+#include <utility>
 #include <vector>
 
 void singleRun() {
@@ -15,9 +17,11 @@ void singleRun() {
   newCA randomizedGrid(Para::sys_nrow, Para::sys_ncol);
 
   for (long t{init_time}; t <= Para::max_time; t++) {
+    /* randomizedGrid.testDensity(t); */
+    /* randomizedGrid.printDensity(); */
     randomizedGrid.visualize(t);
     randomizedGrid.writeFile(t);
-    randomizedGrid.update_self_replication();
+    randomizedGrid.update_squares();
     /* if (t == 50) { */
     /*   randomizedGrid.testDensity(t); */
     /* } */
@@ -37,5 +41,5 @@ int main() {
   /* std::cout << tester.getTypeReplicator(); */
   /* testguy.decayRoll(tester); */
   /* std::cout << tester.getTypeReplicator(); */
-  /* return 0; */
+  return 0;
 }

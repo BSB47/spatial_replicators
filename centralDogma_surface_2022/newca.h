@@ -1,11 +1,13 @@
 #include "cash-display.hpp"
 #include "cellular-automata.hpp"
-#include "molecule.h"
 
 #include <fstream>
+#include <memory>
 
 #ifndef NEWCA_H
 #define NEWCA_H
+
+class Molecule;
 
 class newCA {
 private:
@@ -13,11 +15,11 @@ private:
   const unsigned ncol{};
 
   std::uint32_t pqDensity{};
-  CA2D<Molecule> plane;
+  CA2D<std::unique_ptr<Molecule>> plane;
 
   CashDisplay *display_p{nullptr};
 
-  std::ofstream output{"output.txt"};
+  std::ofstream output{"output/output.txt"};
 
   enum cashColors {
     blue,  // p
@@ -35,13 +37,18 @@ public:
   newCA(const unsigned a_nrow, const unsigned a_ncol);
   void visualize(const long t); // initializing and opening window/png
   void writeFile(const long t); // writing density of replicators to a file
-  /* void testDensity(const long t); function to test if the pqDensity
+  void testDensity(const long t);
+  void printDensity();
+  /* function to test if the pqDensity
    * incre-/decrements are working.*/
   void plane_to_display(); // letting display_p put pixels into plane
 
   /* actual simulation */
-  void decayRoll(Molecule &mole);
-  void update_self_replication();
+  void decay(std::unique_ptr<Molecule> &mole);
+  void diffuse(std::unique_ptr<Molecule> &mole, unsigned row, unsigned col);
+  int determineComplex(unsigned row, unsigned col,
+                       std::unique_ptr<Molecule> &mole, int mole_type);
+  void update_squares();
 
   ~newCA();
 };

@@ -65,7 +65,6 @@
 #ifndef CELLULARAUTOMATA
 #define CELLULARAUTOMATA
 
-
 template <class T> class CA2D {
  
 private:
