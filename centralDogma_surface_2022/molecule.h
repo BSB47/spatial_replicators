@@ -16,9 +16,9 @@ public:
 
   enum TypeComplex {
     free,
-    /* occupied, */
     cata,
-    temp,
+    tempP, // this means a template producing P
+    tempQ,
   };
 
 private:
@@ -33,18 +33,15 @@ private:
   /* 6: m_kqqq */
   /* 7: m_kqqp */
 
-  double *m_ratePtr{m_rateList};
-
   TypeReplicator m_typeRep{};
-  TypeReplicator m_repOutcome{};
-  TypeComplex m_typeComp{};
+  TypeComplex m_typeComp{free};
 
-  Molecule *bon_nei;
+  unsigned bon_nei{};
 
   double m_mutation_probability{};
 
 public:
-  Molecule() { std::cout << "I'm born\n"; }
+  Molecule() {}
 
   Molecule(TypeReplicator typeR, TypeComplex typeC)
       : m_typeRep{typeR}, m_typeComp{typeC} {
@@ -70,9 +67,11 @@ public:
   const TypeReplicator &getTypeReplicator() const { return m_typeRep; }
   void setTypeRep(TypeReplicator myType) { m_typeRep = myType; }
 
-  friend int newCA::determineComplex(unsigned row, unsigned col,
-                                     std::unique_ptr<Molecule> &mole,
+  friend int newCA::determineComplex(Molecule *mole, Molecule *someNei,
                                      int mole_type);
+  friend void newCA::formingComplex(int complex, Molecule *mole, int neiNum,
+                                    Molecule *someNei);
+  friend void newCA::update_squares();
 };
 
 #endif

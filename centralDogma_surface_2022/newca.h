@@ -14,7 +14,6 @@ private:
   const unsigned nrow{};
   const unsigned ncol{};
 
-  std::uint32_t pqDensity{};
   CA2D<std::unique_ptr<Molecule>> plane;
 
   CashDisplay *display_p{nullptr};
@@ -35,19 +34,18 @@ private:
 public:
   /* display and outupt */
   newCA(const unsigned a_nrow, const unsigned a_ncol);
-  void visualize(const long t); // initializing and opening window/png
-  void writeFile(const long t); // writing density of replicators to a file
-  void testDensity(const long t);
-  void printDensity();
-  /* function to test if the pqDensity
-   * incre-/decrements are working.*/
+  void visualize(const long t);  // initializing and opening window/png
+  void writeFile(const long t);  // writing density of replicators to a file
+  int testDensity(const long t); // counts number of p's and q's
+  int testComplex(const long t, int c); // counters number of a certain complex
   void plane_to_display(); // letting display_p put pixels into plane
 
   /* actual simulation */
-  void decay(std::unique_ptr<Molecule> &mole);
+  void decay(Molecule *mole);
   void diffuse(std::unique_ptr<Molecule> &mole, unsigned row, unsigned col);
-  int determineComplex(unsigned row, unsigned col,
-                       std::unique_ptr<Molecule> &mole, int mole_type);
+  int determineComplex(Molecule *mole, Molecule *someNei, int mole_type);
+  void formingComplex(int complex, Molecule *mole, int neiNum,
+                      Molecule *someNei);
   void update_squares();
 
   ~newCA();
