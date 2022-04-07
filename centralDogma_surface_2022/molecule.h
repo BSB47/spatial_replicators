@@ -36,12 +36,13 @@ private:
   TypeReplicator m_typeRep{};
   TypeComplex m_typeComp{free};
 
-  unsigned bon_nei{};
+  unsigned bon_nei{0};
+  Molecule *nei_ptr{nullptr};
 
   double m_mutation_probability{};
 
 public:
-  Molecule() {}
+  Molecule() = default;
 
   Molecule(TypeReplicator typeR, TypeComplex typeC)
       : m_typeRep{typeR}, m_typeComp{typeC} {
@@ -67,10 +68,13 @@ public:
   const TypeReplicator &getTypeReplicator() const { return m_typeRep; }
   void setTypeRep(TypeReplicator myType) { m_typeRep = myType; }
 
-  friend int newCA::determineComplex(Molecule *mole, Molecule *someNei,
-                                     int mole_type);
+  friend int newCA::determineComplex(const double myFate, double &cumuProb,
+                                     Molecule *mole, Molecule *someNei,
+                                     const int mole_type);
   friend void newCA::formingComplex(int complex, Molecule *mole, int neiNum,
                                     Molecule *someNei);
+  friend void newCA::formingComplex(int complex, Molecule *mole,
+                                    Molecule *someNeiWM);
   friend void newCA::update_squares();
 };
 

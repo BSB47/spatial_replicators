@@ -43,9 +43,12 @@ public:
   /* actual simulation */
   void decay(Molecule *mole);
   void diffuse(std::unique_ptr<Molecule> &mole, unsigned row, unsigned col);
-  int determineComplex(Molecule *mole, Molecule *someNei, int mole_type);
+  int determineComplex(const double myFate, double &cumuProb, Molecule *mole,
+                       Molecule *someNei, const int mole_type);
   void formingComplex(int complex, Molecule *mole, int neiNum,
                       Molecule *someNei);
+  void formingComplex(int complex, Molecule *mole,
+                      Molecule *someNeiWM); // overload for well-mixed for now
   void update_squares();
 
   ~newCA();

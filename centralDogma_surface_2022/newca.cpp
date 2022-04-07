@@ -124,6 +124,8 @@ There are 3 kinds of numbers this function can return:
 100-107: complex has formed and someNei is the catalyst, mole is the template
 >=1000: complex did not form or someNei is S */
 int newCA::determineComplex(Molecule *mole, Molecule *someNei, int mole_type) {
+  assert(mole->getTypeReplicator() == mole_type && (mole_type != Molecule::s) &&
+         (someNei->getTypeReplicator() != Molecule::s));
   const double complexProb{DiceRoller::probabilityGen(DiceRoller::twister)};
   double cumuProb{};
 
@@ -192,33 +194,15 @@ int newCA::determineComplex(Molecule *mole, Molecule *someNei, int mole_type) {
     }
   default:
     return 1010; // something is broken
-
-    /* switch (mole_type) { // 0=p, 1=q, 2=s */
-    /* case 0: */
-    /*   switch (someNei.getTypeReplicator()) { // 0=p, 1=q, 2=s */
-    /*   case 0: // p1p2, where p1 is mole and the catalyst */
-    /*     cumuProb += Para::beta * mole.m_kppp; */
-    /*     if (complexProb <= cumuProb && mole.m_typeComp == 0 && */
-    /*         someNei.m_typeComp == 0) { */
-    /*       mole.m_typeComp = Molecule::cata; */
-    /*       someNei.m_typeComp = Molecule::temp; */
-    /*       someNei.m_repOutcome = Molecule::p; */
-    /*       return; */
-    /*     } else if (complexProb <= (cumuProb + mole.m_kppq) && */
-    /*                mole.m_typeComp == 0 && someNei.m_typeComp == 0) { */
-    /*       mole.m_typeComp = Molecule::cata; */
-    /*       someNei.m_typeComp = Molecule::temp; */
-    /*       someNei.m_repOutcome = Molecule::q; */
-    /*     } */
-    /*   } */
-    /* } */
   }
 }
 
 void newCA::formingComplex(int complex, Molecule *mole, int neiNum,
                            Molecule *someNei) {
   mole->bon_nei = neiNum;
+  mole->nei_ptr = someNei;
   someNei->bon_nei = plane.neighbor_converter(neiNum);
+  someNei->nei_ptr = mole;
   switch (complex) {
   case 0:
   case 3:
@@ -252,15 +236,57 @@ void newCA::formingComplex(int complex, Molecule *mole, int neiNum,
     mole->m_typeComp = Molecule::tempQ;
     std::cout << "complex formed" << std::endl;
     return;
-  case 1000 ... 1005:
-    std::cout << "complex didn't form" << std::endl;
+  case 1000 ... 1003:
+    mole->bon_nei = 0;
+    mole->nei_ptr = nullptr;
+    someNei->bon_nei = 0;
+    someNei->nei_ptr = nullptr;
     return;
-  case 1010:
-    std::cout << "broken" << std::endl;
-    throw -1;
   }
 }
 
+void newCA::formingComplex(int complex, Molecule *mole, Molecule *someNeiWM) {
+  mole->nei_ptr = someNeiWM;
+  someNeiWM->nei_ptr = mole;
+  switch (complex) {
+  case 0:
+  case 3:
+  case 4:
+  case 7:
+    mole->m_typeComp = Molecule::cata;
+    someNeiWM->m_typeComp = Molecule::tempP;
+    std::cout << "complex formed" << std::endl;
+    return;
+  case 1:
+  case 2:
+  case 5:
+  case 6:
+    mole->m_typeComp = Molecule::cata;
+    someNeiWM->m_typeComp = Molecule::tempQ;
+    std::cout << "complex formed" << std::endl;
+    return;
+  case 100:
+  case 103:
+  case 104:
+  case 107:
+    someNeiWM->m_typeComp = Molecule::cata;
+    mole->m_typeComp = Molecule::tempP;
+    std::cout << "complex formed" << std::endl;
+    return;
+  case 101:
+  case 102:
+  case 105:
+  case 106:
+    someNeiWM->m_typeComp = Molecule::cata;
+    mole->m_typeComp = Molecule::tempQ;
+    std::cout << "complex formed" << std::endl;
+    return;
+  case 1000 ... 1003:
+    mole->nei_ptr = nullptr;
+    someNeiWM->nei_ptr = nullptr;
+    return;
+  }
+}
 void newCA::update_squares() {
   unsigned row{};
   unsigned col{};
@@ -273,21 +299,29 @@ void newCA::update_squares() {
     Molecule *mole{plane.cell(row, col).get()};
     auto mole_type{mole->getTypeReplicator()};
 
-    unsigned neiNum{
-        mole->bon_nei
-            ? plane.neigh_7_select(
-                  DiceRoller::randomNei(DiceRoller::randomNei),
-                  mole->bon_nei) // exclude nei if mole is already in a complex
-            : static_cast<unsigned int>(
-                  DiceRoller::randomNei(DiceRoller::twister))};
-    Molecule *someNei{plane.neigh_wrap(row, col, neiNum).get()};
+    /* unsigned neiNum{ */
+    /*     mole->bon_nei */
+    /*         ? plane.neigh_7_select( */
+    /*               DiceRoller::randomNeiExcl(DiceRoller::twister), */
+    /*               mole->bon_nei) // exclude nei if mole is already in a
+     * complex */
+    /*         : static_cast<unsigned int>( */
+    /*               DiceRoller::randomNei(DiceRoller::twister))}; */
+    /* Molecule *someNei{plane.neigh_wrap(row, col, neiNum).get()}; */
+    Molecule *someNeiWM{
+        plane
+            .cell(DiceRoller::randomRowOrCol(DiceRoller::twister),
+                  DiceRoller::randomRowOrCol(DiceRoller::twister))
+            .get()};
 
     const double myFate{DiceRoller::probabilityGen(DiceRoller::twister)};
 
     // sanity check: if not bonded to a neighbour, mole should be free, vice
     // versa
-    assert((mole->bon_nei == 0 && mole->m_typeComp == Molecule::free) ||
-           (mole->bon_nei != 0 && mole->m_typeComp != Molecule::free));
+    /* assert((mole->bon_nei == 0 && mole->m_typeComp == Molecule::free) || */
+    /* (mole->bon_nei != 0 && mole->m_typeComp != Molecule::free)); */
+    assert((mole->nei_ptr == nullptr && mole->m_typeComp == Molecule::free) ||
+           (mole->nei_ptr != nullptr && mole->m_typeComp != Molecule::free));
 
     if (mole_type != Molecule::s) {
       if (myFate <= (Para::alpha * Para::decay_probability)) {
@@ -302,12 +336,20 @@ void newCA::update_squares() {
                                            Para::diffusion_probability +
                                            Para::complex_probability)) &&
                  mole->m_typeComp == Molecule::free &&
-                 someNei->m_typeComp == Molecule::free) {
+                 (someNeiWM->m_typeComp == Molecule::free &&
+                  (someNeiWM->getTypeReplicator() != Molecule::s))) {
         try {
-          formingComplex(determineComplex(mole, someNei, mole_type), mole,
-                         neiNum, someNei);
-        } catch (signed int) {
-          std::cerr << "Exception detected in formingComplex()";
+          /* formingComplex(determineComplex(mole, someNeiWM, mole_type), mole,
+           */
+          /*                neiNum, someNeiWM); */
+          int myComplex{determineComplex(mole, someNeiWM, mole_type)};
+          if (myComplex > 1003) // note that anything beyond 1003 means
+                                // something in determineComplex is broken
+                                // e.g. someNei is a s!
+            throw -1;
+          formingComplex(myComplex, mole, someNeiWM);
+        } catch (int) {
+          std::cerr << "Exception detected in determineComplex(); ";
         }
       }
     }
