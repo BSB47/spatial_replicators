@@ -66,16 +66,11 @@ public:
   /* } */
 
   const TypeReplicator &getTypeReplicator() const { return m_typeRep; }
-  void setTypeRep(TypeReplicator myType) { m_typeRep = myType; }
+  void setTypeRep(TypeReplicator myType) {
+    m_typeRep = myType;
+  } // setters no longer useful since newCA is now a friend class!
 
-  friend int newCA::determineComplex(const double myFate, double &cumuProb,
-                                     Molecule *mole, Molecule *someNei,
-                                     const int mole_type);
-  friend void newCA::formingComplex(int complex, Molecule *mole, int neiNum,
-                                    Molecule *someNei);
-  friend void newCA::formingComplex(int complex, Molecule *mole,
-                                    Molecule *someNeiWM);
-  friend void newCA::update_squares();
+  friend class newCA;
 };
 
 #endif

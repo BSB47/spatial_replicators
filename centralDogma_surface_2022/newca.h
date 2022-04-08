@@ -16,7 +16,9 @@ private:
 
   CA2D<std::unique_ptr<Molecule>> plane;
 
-  CashDisplay *display_p{nullptr};
+  CashDisplay *display_p{
+      nullptr}; // need to disable copy and assignment for this class!!!
+                // Otherwise will violate rule of three
 
   std::ofstream output{"output/output.txt"};
 
@@ -34,7 +36,7 @@ private:
 public:
   /* display and outupt */
   newCA(const unsigned a_nrow, const unsigned a_ncol);
-  void visualize(const long t);  // initializing and opening window/png
+  void visualize();              // initializing and opening window/png
   void writeFile(const long t);  // writing density of replicators to a file
   int testDensity(const long t); // counts number of p's and q's
   int testComplex(const long t, int c); // counters number of a certain complex

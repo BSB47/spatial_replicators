@@ -53,13 +53,11 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
   display_p->open_png();
 }
 
-void newCA::visualize(const long t) {
-  if (t % Para::display_interval == 0) {
-    plane_to_display();
-    display_p->draw_window();
-    display_p->draw_png();
-  } else
-    return;
+void newCA::visualize() {
+  plane_to_display();
+  display_p->draw_window();
+  display_p->draw_png();
+  return;
 }
 
 void newCA::writeFile(const long t) {
@@ -88,8 +86,10 @@ int newCA::testDensity(const long t) {
   return testDensity;
 }
 
-void newCA::plane_to_display() { // Does not paint display! Just transports
-                                 // plane data to it.
+int testComplex(const long t, int c) {}
+
+void newCA::plane_to_display() { // Does not paint display! Just
+                                 // transports plane data to it.
   for (unsigned row{1}; row <= nrow; row++) {
     for (unsigned col{1}; col <= ncol; col++) {
       switch (plane.cell(row, col)->getTypeReplicator()) {
@@ -107,7 +107,17 @@ void newCA::plane_to_display() { // Does not paint display! Just transports
   }
 }
 
-void newCA::decay(Molecule *mole) { mole->setTypeRep(Molecule::s); }
+void newCA::decay(Molecule *mole) {
+  if (mole->nei_ptr != nullptr) { // for loop for dissociation
+    mole->bon_nei = 0;            // remove mole's index info on bonded nei
+    mole->nei_ptr->bon_nei = 0;   // bonded nei loses its bonded nei (i.e. mole)
+    mole->nei_ptr->nei_ptr = nullptr; // bonded nei loses nei_ptr (to mole)
+    mole->nei_ptr->m_typeComp = Molecule::free; // bonded nei is now free
+    mole->nei_ptr = nullptr; // mole loses pointer to bonded nei
+  }
+  mole->setTypeRep(Molecule::s); // mole decays but old bonded nei doesn't
+  mole->m_typeComp = Molecule::free;
+}
 
 void newCA::diffuse(std::unique_ptr<Molecule> &mole_ptr, unsigned row,
                     unsigned col) {
@@ -123,40 +133,44 @@ There are 3 kinds of numbers this function can return:
 0-7: complex has formed and mole is the catalyst, someNei is the template
 100-107: complex has formed and someNei is the catalyst, mole is the template
 >=1000: complex did not form or someNei is S */
-int newCA::determineComplex(Molecule *mole, Molecule *someNei, int mole_type) {
-  assert(mole->getTypeReplicator() == mole_type && (mole_type != Molecule::s) &&
+int newCA::determineComplex(const double myFate, double &cumuProb,
+                            Molecule *mole, Molecule *someNei,
+                            const int mole_type) {
+  assert((someNei->m_typeComp == Molecule::free) &&
+         (mole->getTypeReplicator() == mole_type) &&
+         (mole_type != Molecule::s) &&
+         (someNei->m_typeComp == Molecule::free) &&
          (someNei->getTypeReplicator() != Molecule::s));
-  const double complexProb{DiceRoller::probabilityGen(DiceRoller::twister)};
-  double cumuProb{};
+  std::cout << cumuProb << std::endl;
 
   switch (mole_type) {
   case 0:
-    switch (someNei->getTypeReplicator()) { // if mole & someNei are both P
-    case 0:
+    switch (someNei->getTypeReplicator()) {
+    case 0: // if mole & someNei are both P
       for (unsigned i{0}; i <= 1; i++) {
-        cumuProb += mole->m_rateList[i];
-        if (complexProb <= cumuProb)
+        cumuProb += Para::alpha * mole->m_rateList[i];
+        if (myFate <= cumuProb)
           return i;
       }
       for (unsigned i{0}; i <= 1; i++) {
-        cumuProb += someNei->m_rateList[i];
-        if (complexProb <= cumuProb)
+        cumuProb += Para::alpha * someNei->m_rateList[i];
+        if (myFate <= cumuProb)
           return (i + 100);
       }
-      /* std::cout << complexProb << ' ' << cumuProb << std::endl; */
+      /* std::cout << myFate << ' ' << cumuProb << std::endl; */
       return 1000; // complex did not form between two P molecules
     case 1:        // if mole is P and someNei is Q
       for (unsigned i{2}; i <= 3; i++) {
-        cumuProb += mole->m_rateList[i];
-        if (complexProb <= cumuProb)
+        cumuProb += Para::alpha * mole->m_rateList[i];
+        if (myFate <= cumuProb)
           return i;
       }
       for (unsigned i{4}; i <= 5; i++) {
-        cumuProb += someNei->m_rateList[i];
-        if (complexProb <= cumuProb)
+        cumuProb += Para::alpha * someNei->m_rateList[i];
+        if (myFate <= cumuProb)
           return (i + 100);
       }
-      /* std::cout << complexProb << ' ' << cumuProb << std::endl; */
+      /* std::cout << myFate << ' ' << cumuProb << std::endl; */
       return 1001; // complex did not form between P and Q
     default:
       return 1005; // someNei is a S
@@ -165,29 +179,29 @@ int newCA::determineComplex(Molecule *mole, Molecule *someNei, int mole_type) {
     switch (someNei->getTypeReplicator()) { // if mole is Q and someNei is P
     case 0:
       for (unsigned i{4}; i <= 5; i++) {
-        cumuProb += mole->m_rateList[i];
-        if (complexProb <= cumuProb)
+        cumuProb += Para::alpha * mole->m_rateList[i];
+        if (myFate <= cumuProb)
           return i;
       }
       for (unsigned i{2}; i <= 3; i++) {
-        cumuProb += someNei->m_rateList[i];
-        if (complexProb <= cumuProb)
+        cumuProb += Para::alpha * someNei->m_rateList[i];
+        if (myFate <= cumuProb)
           return (i + 100);
       }
-      /* std::cout << complexProb << ' ' << cumuProb << std::endl; */
+      /* std::cout << myFate << ' ' << cumuProb << std::endl; */
       return 1002; // complex did not form between Q and P
     case 1:        // if both are Q
       for (unsigned i{6}; i <= 7; i++) {
-        cumuProb += mole->m_rateList[i];
-        if (complexProb <= cumuProb)
+        cumuProb += Para::alpha * mole->m_rateList[i];
+        if (myFate <= cumuProb)
           return i;
       }
       for (unsigned i{6}; i <= 7; i++) {
-        cumuProb += someNei->m_rateList[i];
-        if (complexProb <= cumuProb)
+        cumuProb += Para::alpha * someNei->m_rateList[i];
+        if (myFate <= cumuProb)
           return (i + 100);
       }
-      /* std::cout << complexProb << ' ' << cumuProb << std::endl; */
+      /* std::cout << myFate << ' ' << cumuProb << std::endl; */
       return 1003; // complex did not form between 2 Qs
     default:
       return 1005; // someNei is a S
@@ -295,6 +309,9 @@ void newCA::update_squares() {
     row = DiceRoller::randomRowOrCol(DiceRoller::twister);
     col = DiceRoller::randomRowOrCol(DiceRoller::twister);
 
+    // mole_ptr is the unique_ptr that owns a molecule; mole is the pointer to
+    // the actual molecule, used for passing the molecule to functions (obtained
+    // by unique_ptr.get())
     std::unique_ptr<Molecule> &mole_ptr{(plane.cell(row, col))};
     Molecule *mole{plane.cell(row, col).get()};
     auto mole_type{mole->getTypeReplicator()};
@@ -313,8 +330,15 @@ void newCA::update_squares() {
             .cell(DiceRoller::randomRowOrCol(DiceRoller::twister),
                   DiceRoller::randomRowOrCol(DiceRoller::twister))
             .get()};
+    while (someNeiWM == mole) {
+      someNeiWM = plane // Reassignment only needed in well-mixed system
+                      .cell(DiceRoller::randomRowOrCol(DiceRoller::twister),
+                            DiceRoller::randomRowOrCol(DiceRoller::twister))
+                      .get();
+    }
 
     const double myFate{DiceRoller::probabilityGen(DiceRoller::twister)};
+    double cumuProb{};
 
     // sanity check: if not bonded to a neighbour, mole should be free, vice
     // versa
@@ -323,26 +347,21 @@ void newCA::update_squares() {
     assert((mole->nei_ptr == nullptr && mole->m_typeComp == Molecule::free) ||
            (mole->nei_ptr != nullptr && mole->m_typeComp != Molecule::free));
 
+    diffuse(mole_ptr, row, col); // cannot use get() here because need to
+                                 // swap the underlying unique_ptr I think
     if (mole_type != Molecule::s) {
+      cumuProb += Para::alpha * Para::decay_probability;
       if (myFate <= (Para::alpha * Para::decay_probability)) {
         decay(plane.cell(row, col).get());
-        // get() returns a raw pointer to the molecule owned
-        // by the unique_ptr at the row, col
-      } else if (myFate <= (Para::alpha * (Para::decay_probability +
-                                           Para::diffusion_probability))) {
-        diffuse(mole_ptr, row, col); // cannot use get() here because need to
-                                     // swap the underlying unique_ptr I think
-      } else if (myFate <= (Para::alpha * (Para::decay_probability +
-                                           Para::diffusion_probability +
-                                           Para::complex_probability)) &&
-                 mole->m_typeComp == Molecule::free &&
-                 (someNeiWM->m_typeComp == Molecule::free &&
-                  (someNeiWM->getTypeReplicator() != Molecule::s))) {
+      } else if ((mole->m_typeComp == Molecule::free) &&
+                 (someNeiWM->getTypeReplicator() != Molecule::s) &&
+                 (someNeiWM->m_typeComp == Molecule::free)) {
         try {
           /* formingComplex(determineComplex(mole, someNeiWM, mole_type), mole,
            */
           /*                neiNum, someNeiWM); */
-          int myComplex{determineComplex(mole, someNeiWM, mole_type)};
+          int myComplex{
+              determineComplex(myFate, cumuProb, mole, someNeiWM, mole_type)};
           if (myComplex > 1003) // note that anything beyond 1003 means
                                 // something in determineComplex is broken
                                 // e.g. someNei is a s!
@@ -355,16 +374,6 @@ void newCA::update_squares() {
     }
   }
 }
-
-/* If chosen replicator is non-s, choose a neighbour at random; then
- * change this neighbour's type to be the same as the chosen
- * replicator's. */
-/* Molecule &someNei{plane.neigh_wrap( */
-/*     row, col, DiceRoller::randomNei(DiceRoller::twister))}; */
-/* if (someNei.getTypeReplicator() == Molecule::s) { */
-/*   someNei.setTypeRep(mole_type); */
-/* else do nothing */
-/* } */
 
 newCA::~newCA() {
   if (display_p)

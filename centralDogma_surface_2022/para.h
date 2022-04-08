@@ -8,10 +8,13 @@ inline constexpr int sys_ncol{512};
 inline constexpr int grid_size{sys_nrow * sys_ncol};
 inline constexpr double diffusion_rate{0.3};
 inline constexpr int scale{10}; // 10x pixel scale
-inline constexpr double decay_probability{0.1};
+inline constexpr double decay_probability{0.5};
 inline constexpr double diffusion_probability{0.1};
+inline constexpr double alpha{0.9999 /
+                              2.02}; // 2.02 is the maximum sum of rates, which
+                                     // belongs to simple molecules
 inline constexpr double beta{0.5};
-inline constexpr long display_interval{1};
+inline constexpr long display_interval{100};
 inline constexpr long max_time{1000};
 } // namespace Para
 
