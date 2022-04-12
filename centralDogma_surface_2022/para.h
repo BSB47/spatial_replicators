@@ -14,7 +14,7 @@ inline constexpr double alpha{0.9999 /
                               2.02}; // 2.02 is the maximum sum of rates, which
                                      // belongs to simple molecules
 inline constexpr double beta{0.5};
-inline constexpr long display_interval{100};
+inline constexpr long display_interval{5};
 inline constexpr long max_time{1000};
 } // namespace Para
 

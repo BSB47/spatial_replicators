@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <random>
@@ -60,33 +61,62 @@ void newCA::visualize() {
   return;
 }
 
-void newCA::writeFile(const long t) {
-  if (!output.is_open()) {
-    output.open("output/output.txt", std::ios::app);
-    /* std::cout << t << "opening output.txt" << std::endl; */
+using newcaFcn = int (newCA::*)(int);
+void newCA::writeFile(const long t, int c, newcaFcn fcn) {
+  if (c == 0 && fcn == &newCA::testComplex) {
+    output << "t "
+           << "number of PP complexes" << '\n';
   }
 
-  if (!output) {
-    std::cerr << "Could not access output.txt\n";
-  }
-
-  output << t * Para::alpha << ' '
-         << static_cast<double>(testDensity(t)) / Para::grid_size << '\n';
-  output.close();
-}
-
-int newCA::testDensity(const long t) {
-  std::uint32_t testDensity{};
-  for (unsigned row{1}; row <= Para::sys_nrow; row++) {
-    for (unsigned col{1}; col <= Para::sys_ncol; col++) {
-      if (plane.cell(row, col)->getTypeReplicator() != Molecule::s)
-        ++testDensity;
+  if (t % Para::display_interval == 0) {
+    if (!output.is_open()) {
+      output.open("output/output.txt", std::ios::app);
+      /* std::cout << t << "opening output.txt" << std::endl; */
     }
+
+    if (!output) {
+      std::cerr << "Could not access output.txt\n";
+    }
+
+    output << t * Para::alpha << ' '
+           << static_cast<double>((this->*fcn)(c)) / Para::grid_size << '\n';
+    output.close();
   }
-  return testDensity;
 }
 
-int testComplex(const long t, int c) {}
+int newCA::testDensity(int c) {
+  if (c == 0) {
+    std::uint32_t testDensity{};
+    for (unsigned row{1}; row <= Para::sys_nrow; row++) {
+      for (unsigned col{1}; col <= Para::sys_ncol; col++) {
+        if (plane.cell(row, col)->getTypeReplicator() != Molecule::s)
+          ++testDensity;
+      }
+    }
+    return testDensity;
+  }
+}
+
+int newCA::testComplex(int c) {
+  if (c == 0) {
+    unsigned PPnumb{};
+    for (unsigned row{1}; row <= nrow; row++) {
+      for (unsigned col{1}; col <= ncol; col++) {
+        if (plane.cell(row, col)->nei_ptr) {
+          if (plane.cell(row, col)->m_typeComp == Molecule::tempP &&
+              plane.cell(row, col)->nei_ptr->getTypeReplicator() ==
+                  Molecule::p) {
+            ++PPnumb;
+          } else if (plane.cell(row, col)->m_typeComp == Molecule::tempP) {
+            std::cout << plane.cell(row, col)->nei_ptr->getTypeReplicator()
+                      << std::endl;
+          }
+        }
+      }
+    }
+    return PPnumb;
+  }
+}
 
 void newCA::plane_to_display() { // Does not paint display! Just
                                  // transports plane data to it.
@@ -125,13 +155,13 @@ void newCA::diffuse(std::unique_ptr<Molecule> &mole_ptr, unsigned row,
       plane.neigh_wrap(row, col, DiceRoller::randomNei(DiceRoller::twister)));
 }
 
-/* The following function returns a number which can be used to decipher if and
-what complex forms between the chosen molecule (passed by reference to this
-function) and a molecule in its neighbourhood (randomly chosen through this
-function).
-There are 3 kinds of numbers this function can return:
-0-7: complex has formed and mole is the catalyst, someNei is the template
-100-107: complex has formed and someNei is the catalyst, mole is the template
+/* The following function returns a number which can be used to decipher
+if and what complex forms between the chosen molecule (passed by reference
+to this function) and a molecule in its neighbourhood (randomly chosen
+through this function). There are 3 kinds of numbers this function can
+return: 0-7: complex has formed and mole is the catalyst, someNei is the
+template 100-107: complex has formed and someNei is the catalyst, mole is
+the template
 >=1000: complex did not form or someNei is S */
 int newCA::determineComplex(const double myFate, double &cumuProb,
                             Molecule *mole, Molecule *someNei,
@@ -309,9 +339,9 @@ void newCA::update_squares() {
     row = DiceRoller::randomRowOrCol(DiceRoller::twister);
     col = DiceRoller::randomRowOrCol(DiceRoller::twister);
 
-    // mole_ptr is the unique_ptr that owns a molecule; mole is the pointer to
-    // the actual molecule, used for passing the molecule to functions (obtained
-    // by unique_ptr.get())
+    // mole_ptr is the unique_ptr that owns a molecule; mole is the
+    // pointer to the actual molecule, used for passing the molecule to
+    // functions (obtained by unique_ptr.get())
     std::unique_ptr<Molecule> &mole_ptr{(plane.cell(row, col))};
     Molecule *mole{plane.cell(row, col).get()};
     auto mole_type{mole->getTypeReplicator()};
@@ -340,9 +370,10 @@ void newCA::update_squares() {
     const double myFate{DiceRoller::probabilityGen(DiceRoller::twister)};
     double cumuProb{};
 
-    // sanity check: if not bonded to a neighbour, mole should be free, vice
-    // versa
-    /* assert((mole->bon_nei == 0 && mole->m_typeComp == Molecule::free) || */
+    // sanity check: if not bonded to a neighbour, mole should be free,
+    // vice versa
+    /* assert((mole->bon_nei == 0 && mole->m_typeComp == Molecule::free)
+     * || */
     /* (mole->bon_nei != 0 && mole->m_typeComp != Molecule::free)); */
     assert((mole->nei_ptr == nullptr && mole->m_typeComp == Molecule::free) ||
            (mole->nei_ptr != nullptr && mole->m_typeComp != Molecule::free));
@@ -357,7 +388,8 @@ void newCA::update_squares() {
                  (someNeiWM->getTypeReplicator() != Molecule::s) &&
                  (someNeiWM->m_typeComp == Molecule::free)) {
         try {
-          /* formingComplex(determineComplex(mole, someNeiWM, mole_type), mole,
+          /* formingComplex(determineComplex(mole, someNeiWM, mole_type),
+           * mole,
            */
           /*                neiNum, someNeiWM); */
           int myComplex{

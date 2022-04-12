@@ -4,7 +4,8 @@
 #include "random.h"
 
 #include <cassert>
-#include <fstream> //debug density counter
+#include <fstream>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <memory>
@@ -20,7 +21,7 @@ void singleRun() {
     if (t % Para::display_interval == 0) {
       randomizedGrid.visualize();
     }
-    randomizedGrid.writeFile(t);
+    randomizedGrid.writeFile(t, 0, &newCA::testComplex);
     randomizedGrid.update_squares();
     /* if (t == 50) { */
     /*   randomizedGrid.testDensity(t); */

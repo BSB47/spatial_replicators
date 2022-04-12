@@ -2,6 +2,7 @@
 #include "cellular-automata.hpp"
 
 #include <fstream>
+#include <functional>
 #include <memory>
 
 #ifndef NEWCA_H
@@ -36,10 +37,12 @@ private:
 public:
   /* display and outupt */
   newCA(const unsigned a_nrow, const unsigned a_ncol);
-  void visualize();              // initializing and opening window/png
-  void writeFile(const long t);  // writing density of replicators to a file
-  int testDensity(const long t); // counts number of p's and q's
-  int testComplex(const long t, int c); // counters number of a certain complex
+  void visualize(); // initializing and opening window/png
+  void writeFile(const long t, int c,
+                 int (newCA::*fcn)(int)); // writing density of a certain
+                                          // replicator/complex to a file
+  int testDensity(int c);                 // counts number of p's and q's
+  int testComplex(int c);  // counters number of a certain complex
   void plane_to_display(); // letting display_p put pixels into plane
 
   /* actual simulation */
