@@ -2,7 +2,6 @@
 #include "cellular-automata.hpp"
 
 #include <fstream>
-#include <functional>
 #include <memory>
 
 #ifndef NEWCA_H
