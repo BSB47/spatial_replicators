@@ -8,6 +8,7 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <memory>
 #include <random>
 #include <vector>
@@ -18,14 +19,14 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
     for (unsigned col = 1; col <= ncol; col++) {
       auto tmp{std::make_unique<Molecule>()};
       plane.cell(row, col) = std::move(tmp);
+      for (int i{0}; i < std::size(plane.cell(row, col)->m_rateList); i++) {
+        plane.cell(row, col)->m_rateList[i] *= Para::beta;
+      }
       switch (DiceRoller::typeInitializer(DiceRoller::twister)) {
       case 1:
         plane.cell(row, col)->setTypeRep(Molecule::p);
         break;
       case 2:
-        plane.cell(row, col)->setTypeRep(Molecule::q);
-        break;
-      default:
         plane.cell(row, col)->setTypeRep(Molecule::s);
         break;
       }
@@ -49,7 +50,7 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
   display_p->color_rgb(blue, 0, 0, 255);
   display_p->color_rgb(red, 255, 0, 0);
   display_p->color_rgb(white, 255, 255, 255);
-  display_p->open_window();
+  /* display_p->open_window(); */
   display_p->open_png();
 }
 
@@ -66,7 +67,6 @@ void newCA::writeFile(const long t, int c, newcaFcn fcn) {
     output << "t "
            << "number of PP complexes" << '\n';
   }
-
   if (t % Para::display_interval == 0) {
     if (!output.is_open()) {
       output.open("output/output.txt", std::ios::app);
@@ -102,13 +102,15 @@ int newCA::testComplex(int c) {
     for (unsigned row{1}; row <= nrow; row++) {
       for (unsigned col{1}; col <= ncol; col++) {
         if (plane.cell(row, col)->nei_ptr) {
-          if (plane.cell(row, col)->m_typeComp == Molecule::tempP &&
-              plane.cell(row, col)->nei_ptr->getTypeReplicator() ==
-                  Molecule::p) {
+          if (plane.cell(row, col)->m_typeComp == Molecule::cata) {
+            assert(
+                plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempP ||
+                plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempQ);
             ++PPnumb;
-          } else if (plane.cell(row, col)->m_typeComp == Molecule::tempP) {
-            std::cout << plane.cell(row, col)->nei_ptr->getTypeReplicator()
-                      << std::endl;
+          } else if (plane.cell(row, col)->m_typeComp == Molecule::tempP &&
+                     plane.cell(row, col)->nei_ptr->getTypeReplicator() !=
+                         Molecule::p) {
+            std::cerr << "formingComplex() is not working correctly";
           }
         }
       }
@@ -189,6 +191,7 @@ int newCA::determineComplex(const double myFate, double &cumuProb,
       /* std::cout << myFate << ' ' << cumuProb << std::endl; */
       return 1000; // complex did not form between two P molecules
     case 1:        // if mole is P and someNei is Q
+      std::cerr << "q is still here!";
       for (unsigned i{2}; i <= 3; i++) {
         cumuProb += Para::alpha * mole->m_rateList[i];
         if (myFate <= cumuProb)
@@ -205,6 +208,7 @@ int newCA::determineComplex(const double myFate, double &cumuProb,
       return 1005; // someNei is a S
     }
   case 1:
+    std::cerr << "q is still here!";
     switch (someNei->getTypeReplicator()) { // if mole is Q and someNei is P
     case 0:
       for (unsigned i{4}; i <= 5; i++) {
@@ -330,6 +334,7 @@ void newCA::formingComplex(int complex, Molecule *mole, Molecule *someNeiWM) {
     return;
   }
 }
+
 void newCA::update_squares() {
   unsigned row{};
   unsigned col{};

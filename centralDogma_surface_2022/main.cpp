@@ -17,9 +17,9 @@ void singleRun() {
   newCA randomizedGrid(Para::sys_nrow, Para::sys_ncol);
 
   for (long t{init_time}; t <= Para::max_time; t++) {
-    if (t % Para::display_interval == 0) {
-      randomizedGrid.visualize();
-    }
+    /* if (t % Para::display_interval == 0) { */
+    /*   randomizedGrid.visualize(); */
+    /* } */
     randomizedGrid.writeFile(t, 0, &newCA::testComplex);
     randomizedGrid.update_squares();
     /* if (t == 50) { */
