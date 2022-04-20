@@ -8,7 +8,7 @@ namespace DiceRoller {
 inline std::random_device rd;
 inline std::seed_seq ss{rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()};
 inline std::mt19937 twister{ss};
-inline std::uniform_int_distribution typeInitializer{1, 2};
+inline std::uniform_int_distribution typeInitializer{1, 3};
 inline std::uniform_int_distribution randomRowOrCol{1, Para::sys_nrow};
 
 // Index should be from 1 to nrow/ncol!!! Boundaries are on

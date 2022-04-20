@@ -2,6 +2,7 @@
 #include "para.h"
 
 #include <iostream>
+#include <iterator>
 
 #ifndef MOLECULE_H
 #define MOLECULE_H
@@ -10,7 +11,7 @@ class Molecule {
 public:
   enum TypeReplicator {
     p,
-    q,
+    /* q, */
     s,
   };
 
@@ -22,7 +23,7 @@ public:
   };
 
 private:
-  double m_rateList[8]{10, 10, 10, 10, 10, 10, 10, 10};
+  double m_rateList[8]{100, 100, 100, 100, 100, 100, 100, 100};
   /* Below are the rates and their corresponding indices */
   /* 0: m_kppp    last two letters stand for template/product */
   /* 1: m_kppq */
@@ -42,14 +43,21 @@ private:
   double m_mutation_probability{};
 
 public:
-  Molecule() = default;
+  Molecule() {
+    for (int i{0}; i < std::size(m_rateList); i++) {
+      m_rateList[i] *= Para::beta;
+    }
+  }
 
   Molecule(TypeReplicator typeR, TypeComplex typeC)
       : m_typeRep{typeR}, m_typeComp{typeC} {
     std::cout << "I'm born\n";
+    for (int i{0}; i < std::size(m_rateList); i++) {
+      m_rateList[i] *= Para::beta;
+    }
   }
 
-  ~Molecule() { std::cout << "I'm dead"; }
+  ~Molecule() {}
 
   /* Molecule(Molecule &&a) noexcept : m_ratePtr(a.m_ratePtr) { */
   /*   a.m_ratePtr = nullptr; */

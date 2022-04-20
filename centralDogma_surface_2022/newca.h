@@ -40,13 +40,15 @@ public:
   void writeFile(const long t, int c,
                  int (newCA::*fcn)(int)); // writing density of a certain
                                           // replicator/complex to a file
-  int testDensity(int c);                 // counts number of p's and q's
-  int testComplex(int c);  // counters number of a certain complex
+
+  int testSimple(int c);   // counts number of simple p's and q's
+  int testDensity(int c);  // counts number of p's and q's indiscriminately
+  int testComplex(int c);  // counts number of a certain complex
   void plane_to_display(); // letting display_p put pixels into plane
 
   /* actual simulation */
   void decay(Molecule *mole);
-  void diffuse(std::unique_ptr<Molecule> &mole, unsigned row, unsigned col);
+  void diffuse(unsigned row, unsigned col);
   int determineComplex(const double myFate, double &cumuProb, Molecule *mole,
                        Molecule *someNei, const int mole_type);
   void formingComplex(int complex, Molecule *mole, int neiNum,

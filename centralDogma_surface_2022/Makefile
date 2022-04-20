@@ -18,7 +18,7 @@ x11.o
 # Options to compiler (both for CC and CXX)
 #CCOPT = -O0 -ggdb -Wall -DTBB_USE_DEBUG# For debagging.
 #CCOPT = -O3 -Wall -Winline  --param inline-unit-growth=150 # For weak debagging
-COPT = -O3 -Wall -DNDEBUG # Most optimized.
+COPT = -O3 -Wall #-DNDEBUG # Most optimized.
 CCOPT = -ggdb -std=c++17 -O1 -Wall #-DNDEBUG Most optimized.
 #CCOPT = -O3 -pg -Wall -Winline --param large-function-growth=450 --param inline-unit-growth=150 -DNDEBUG # For profiling
 
