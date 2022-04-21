@@ -3,10 +3,12 @@
 
 #include <fstream>
 #include <memory>
+#include <string_view>
 
 #ifndef NEWCA_H
 #define NEWCA_H
 
+void singleRun();
 class Molecule;
 
 class newCA {
@@ -41,10 +43,11 @@ public:
                  int (newCA::*fcn)(int)); // writing density of a certain
                                           // replicator/complex to a file
 
-  int testSimple(int c);   // counts number of simple p's and q's
-  int testDensity(int c);  // counts number of p's and q's indiscriminately
-  int testComplex(int c);  // counts number of a certain complex
-  void plane_to_display(); // letting display_p put pixels into plane
+  int testSimple(char type);  // counts number of simple p's and q's
+  int testDensity(char type); // counts number of p's and q's indiscriminately
+  int testComplex(
+      std::string_view compType); // counts number of a certain complex
+  void plane_to_display();        // letting display_p put pixels into plane
 
   /* actual simulation */
   void decay(Molecule *mole);
@@ -56,6 +59,8 @@ public:
   void formingComplex(int complex, Molecule *mole,
                       Molecule *someNeiWM); // overload for well-mixed for now
   void update_squares();
+
+  friend void singleRun();
 
   ~newCA();
 };

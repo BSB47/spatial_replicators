@@ -22,24 +22,10 @@ void singleRun() {
     /* } */
     randomizedGrid.writeFile(t, 0, &newCA::testComplex);
     randomizedGrid.update_squares();
-    /* if (t == 50) { */
-    /*   randomizedGrid.testDensity(t); */
-    /* } */
-  }
-  char kill{};
-  std::cout << "type q+enter to quit: "; // Needs to go!
-  std::cin >> kill;
-  if (kill == 'q') {
-    std::cout << "display_p is dead! quitting now...";
   }
 }
 
 int main() {
   singleRun();
-  /* newCA testguy{10, 10}; */
-  /* Molecule tester{Molecule::p, Molecule::free}; */
-  /* std::cout << tester.getTypeReplicator(); */
-  /* testguy.decayRoll(tester); */
-  /* std::cout << tester.getTypeReplicator(); */
   return 0;
 }

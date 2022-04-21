@@ -11,7 +11,7 @@ class Molecule {
 public:
   enum TypeReplicator {
     p,
-    /* q, */
+    q,
     s,
   };
 
