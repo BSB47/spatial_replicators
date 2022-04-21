@@ -13,7 +13,7 @@
 >>>>>>> decay+diff
 **/centralDogma_surface_2022/.R*
 **/nobuto-surf
-**/.*
+.*/
 vgcore.*
 CenSur
 compile_commands.json
