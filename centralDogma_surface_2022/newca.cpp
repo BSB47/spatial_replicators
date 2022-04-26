@@ -57,19 +57,25 @@ void newCA::visualize() {
   return;
 }
 
-using newcaFcn = int (newCA::*)(int);
-void newCA::writeFile(const long t, int c, newcaFcn fcn) {
+using newcaFcn = int (newCA::*)(int, int);
+void newCA::writeFile(const long t, std::string_view cType, newcaFcn fcn) {
   if (!output) {
     std::cerr << "Could not access output.txt\n";
   }
 
   output << t * Para::alpha << ' '
-         << static_cast<double>((this->*fcn)(c)) / Para::grid_size << ' '
+         << static_cast<double>((this->*fcn)(0, 0)) / Para::grid_size << ' '
+         << static_cast<double>((this->*fcn)(0, 1)) / Para::grid_size << ' '
+         << static_cast<double>((this->*fcn)(1, 1)) / Para::grid_size << ' '
+         << static_cast<double>((this->*fcn)(1, 0)) / Para::grid_size << ' '
          << static_cast<double>(testSimple(0)) / Para::grid_size << ' '
          << static_cast<double>(testSimple(1)) / Para::grid_size << ' '
-         << static_cast<double>(testDensity(1)) / Para::grid_size << '\n';
-  if (t % 100 == 0)
+         << static_cast<double>(testSimple(2)) / Para::grid_size << '\n';
+  /* << static_cast<double>(testDensity(1)) / Para::grid_size << '\n'; */
+  if (t % 100 == 0) {
     output.flush();
+    std::cout << "flushed \n";
+  }
 }
 
 int newCA::testSimple(char type) {
@@ -95,39 +101,23 @@ int newCA::testDensity(char type) {
   return testDensity;
 }
 
-int newCA::testComplex(std::string_view compType) { // compType sanity checking
-                                                    // is handled at entry point
+int newCA::testComplex(int type1, int type2) { // cType error checking
+                                               // is handled at point of input
   unsigned numb{};
   for (unsigned row{1}; row <= nrow; row++) {
     for (unsigned col{1}; col <= ncol; col++) {
-
-      /* if (compType == "PP") { */
-      /*   if (plane.cell(row, col)->nei_ptr && */
-      /*       plane.cell(row, col)->m_typeComp == Molecule::cata && */
-      /*       plane.cell(row, col)->m_typeRep == Molecule::p && */
-      /*       plane.cell(row, col)->nei_ptr->m_typeRep == Molecule::p) { */
-      /*     assert(plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempP
-       * || */
-      /*            plane.cell(row, col)->nei_ptr->m_typeComp ==
-       * Molecule::tempQ); */
-      /*     ++numb; */
-      /*   } */
-      /* } else if (compType == "PQ") { */
-      /*   if (plane.cell(row, col)->nei_ptr && */
-      /*       plane.cell(row, col)->m_typeComp == Molecule::cata && */
-      /*       plane.cell(row, col)->m_typeRep == Molecule::p && */
-      /*       plane.cell(row, col)->nei_ptr->m_typeRep == Molecule::p) { */
-      /*     assert(plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempP
-       * || */
-      /*            plane.cell(row, col)->nei_ptr->m_typeComp ==
-       * Molecule::tempQ); */
-      /*     ++numb; */
-      /*   } */
-      /* } */
+      if (plane.cell(row, col)->nei_ptr &&
+          plane.cell(row, col)->getTypeReplicator() == type1 &&
+          plane.cell(row, col)->nei_ptr->getTypeReplicator() == type2 &&
+          plane.cell(row, col)->m_typeComp == Molecule::cata) {
+        assert(plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempP ||
+               plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempQ);
+        ++numb;
+      }
     }
-    std::cout << numb << std::endl;
-    return numb;
   }
+  std::cout << numb << std::endl;
+  return numb;
 }
 
 void newCA::plane_to_display() { // Does not paint display! Just
@@ -205,8 +195,8 @@ void newCA::diffuse(unsigned row, unsigned col) {
 /* The following function returns a number which can be used to decipher
 if and what complex forms between the chosen molecule (passed by address to
 this function) and a molecule in its neighbourhood (randomly chosen through
-this function). There are 3 kinds of numbers this function can return: 0-7:
-complex has formed and mole is the catalyst, someNei is the template
+this function). There are 3 kinds of numbers this function can return:
+0-7: complex has formed and mole is the catalyst, someNei is the template
 100-107: complex has formed and someNei is the catalyst, mole is the
 template
 >=1000: complex did not form or someNei is S */

@@ -39,15 +39,14 @@ public:
   /* display and outupt */
   newCA(const unsigned a_nrow, const unsigned a_ncol);
   void visualize(); // initializing and opening window/png
-  void writeFile(const long t, int c,
-                 int (newCA::*fcn)(int)); // writing density of a certain
-                                          // replicator/complex to a file
+  void writeFile(const long t, std::string_view cType,
+                 int (newCA::*fcn)(int, int)); // writing density of a certain
+                                               // replicator/complex to a file
 
   int testSimple(char type);  // counts number of simple p's and q's
   int testDensity(char type); // counts number of p's and q's indiscriminately
-  int testComplex(
-      std::string_view compType); // counts number of a certain complex
-  void plane_to_display();        // letting display_p put pixels into plane
+  int testComplex(int type1, int type2); // counts number of a certain complex
+  void plane_to_display(); // letting display_p put pixels into plane
 
   /* actual simulation */
   void decay(Molecule *mole);

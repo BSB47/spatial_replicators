@@ -3,16 +3,21 @@
 #include "para.h"
 #include "random.h"
 
-#include <cassert>
+#include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <iterator>
-#include <memory>
-#include <random>
-#include <utility>
-#include <vector>
+#include <string_view>
 
-void singleRun() {
+char **getCmd(char **begin, char **end, const std::string_view opt) {
+  char **itr{std::find(begin, end, opt)};
+  if (itr != end && ++itr != end) { // note that the last element of argv (i.e.
+                                    // end - 1) is a nullptr
+    return itr;
+  }
+  return nullptr;
+}
+
+void singleRun(std::string_view cType) {
   long init_time{0};
   newCA randomizedGrid(Para::sys_nrow, Para::sys_ncol);
 
@@ -20,12 +25,31 @@ void singleRun() {
     /* if (t % Para::display_interval == 0) { */
     /* randomizedGrid.visualize(); */
     /* } */
-    randomizedGrid.writeFile(t, 0, &newCA::testComplex);
+    randomizedGrid.writeFile(t, "qp", &newCA::testComplex);
     randomizedGrid.update_squares();
   }
 }
 
-int main() {
-  singleRun();
+int main(int argc, char *argv[]) {
+
+  /* if (argc <= 2) { */
+  /*   std::cout << "Enter valid arguments to proceed '\n'"; */
+  /*   return 1; */
+  /* } */
+
+  /* char **compout{getCmd(argv, argv + argc, "-co")}; */
+  /* auto getCompout{[](std::string_view coOpt) { */
+  /*   return (coOpt == "pp" || coOpt == "pq" || coOpt == "qq" || coOpt ==
+   * "qp"); */
+  /* }}; */
+  /* char **simpout{getCmd(argv, argv + argc, "-so")}; */
+
+  /* if (compout) { */
+  /*   for (int i{static_cast<int>(compout - &argv[0])}; i < argc; ++i) { */
+  /*     std::cout << *std::find_if(&argv[i], argv + argc, getCompout); */
+  /*   } */
+  /* } */
+
+  singleRun("pp");
   return 0;
 }
