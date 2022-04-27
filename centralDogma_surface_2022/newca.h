@@ -39,7 +39,7 @@ public:
   /* display and outupt */
   newCA(const unsigned a_nrow, const unsigned a_ncol);
   void visualize(); // initializing and opening window/png
-  void writeFile(const long t, std::string_view cType,
+  void writeFile(const long t,
                  int (newCA::*fcn)(int, int)); // writing density of a certain
                                                // replicator/complex to a file
 
@@ -49,7 +49,7 @@ public:
   void plane_to_display(); // letting display_p put pixels into plane
 
   /* actual simulation */
-  void decay(Molecule *mole);
+  void decay(Molecule *mole, unsigned dis = 0); // dis=1 for dissociation
   void diffuse(unsigned row, unsigned col);
   int determineComplex(const double myFate, double &cumuProb, Molecule *mole,
                        Molecule *someNei, const int mole_type);

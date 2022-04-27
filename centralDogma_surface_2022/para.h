@@ -11,6 +11,7 @@ inline constexpr double decay_probability{100};
 inline constexpr double diffusion_probability{0.1};
 inline constexpr double alpha{0.9999 / 200};
 inline constexpr double beta{0.25};
+inline constexpr double gamma{0.25};
 inline constexpr long display_interval{100};
 inline constexpr long max_time{1000000};
 } // namespace Para

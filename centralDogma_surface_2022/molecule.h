@@ -34,6 +34,11 @@ private:
   /* 6: m_kqqq */
   /* 7: m_kqqp */
 
+  unsigned m_cata_rate_index{10};
+  // the index of the catalytic parameter if this molecule is the
+  // catalyst in a complex; initializes or decays/dissociates to a
+  // nonsense value
+
   TypeReplicator m_typeRep{};
   TypeComplex m_typeComp{free};
 
@@ -74,6 +79,7 @@ public:
   /* } */
 
   const TypeReplicator &getTypeReplicator() const { return m_typeRep; }
+  const double getParamIfCata() const { return m_rateList[m_cata_rate_index]; }
   void setTypeRep(TypeReplicator myType) {
     m_typeRep = myType;
   } // setters no longer useful since newCA is now a friend class!
