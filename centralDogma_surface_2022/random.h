@@ -17,6 +17,7 @@ inline std::uniform_int_distribution randomRowOrCol{1, Para::sys_nrow};
 inline std::uniform_int_distribution randomNei{1, 8};
 inline std::uniform_int_distribution randomNeiExcl{1, 7};
 inline std::uniform_real_distribution<double> probabilityGen{0.0, 1.0};
+inline std::uniform_real_distribution<double> mutationGen{-0.05, 0.05};
 
 } // namespace DiceRoller
 

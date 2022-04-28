@@ -122,7 +122,7 @@ int newCA::testComplex(int type1, int type2) {
       }
     }
   }
-  std::cout << numb << std::endl;
+  /* std::cout << numb << std::endl; */
   return numb;
 }
 
@@ -155,7 +155,7 @@ void newCA::decay(Molecule *mole, unsigned dis) {
     mole->nei_ptr = nullptr; // mole loses pointer to bonded nei
   }
 
-  assert(dis == 0 || dis == 1);
+  assert(!dis || dis == 1);
   if (!dis) { // !dis for pure decay, dis for dissociation w/o decay
     mole->setTypeRep(Molecule::s); // mole decays but old bonded nei doesn't
   }
@@ -397,6 +397,42 @@ void newCA::formingComplex(int complex, Molecule *mole, Molecule *someNeiWM) {
   }
 }
 
+void newCA::mutation(Molecule *mole) {
+  assert(mole->m_typeComp == Molecule::free);
+  std::cout << "mutating\n";
+  if (DiceRoller::probabilityGen(DiceRoller::twister) <=
+      Para::mutation_probability) {
+    for (int i{0}; i < std::size(mole->m_rateList); i++) {
+      if (mole->m_rateList[i] +=
+          DiceRoller::mutationGen(DiceRoller::twister) > 1) {
+        mole->m_rateList[i] = 2 - mole->m_rateList[i];
+        if (mole->m_rateList[i] < 0)
+          mole->m_rateList[i] = 0;
+        assert(mole->m_rateList[i] <= 1);
+      }
+    }
+  }
+}
+
+void newCA::replication(Molecule *mole, Molecule *someNei) {
+  assert((mole->m_typeComp == Molecule::cata) !=
+         (mole->nei_ptr->m_typeComp ==
+          Molecule::cata)); // XOR on cata status; duplicate but better safe
+                            // than sorry
+
+  Molecule::TypeComplex productType{mole->m_typeComp == Molecule::cata
+                                        ? mole->nei_ptr->m_typeComp
+                                        : mole->m_typeComp};
+  if ((productType != Molecule::tempP) && (productType != Molecule::tempQ))
+    throw -1;
+  else if (productType == Molecule::tempP)
+    someNei->m_typeRep = Molecule::p;
+  else if (productType == Molecule::tempQ)
+    someNei->m_typeRep = Molecule::q;
+
+  decay(mole, 1); // complex dissociation
+  mutation(someNei);
+}
 void newCA::update_squares() {
   unsigned row{};
   unsigned col{};
@@ -459,10 +495,6 @@ void newCA::update_squares() {
                  (someNeiWM->m_typeRep != Molecule::s) &&
                  (someNeiWM->m_typeComp == Molecule::free)) {
         try {
-          /* formingComplex(determineComplex(mole, someNeiWM, mole_type),
-           * mole,
-           */
-          /*                neiNum, someNeiWM); */
           int myComplex{
               determineComplex(myFate, cumuProb, mole, someNeiWM, mole_type)};
           if (myComplex > 1003) // note that anything beyond 1003 means
@@ -474,25 +506,32 @@ void newCA::update_squares() {
           std::cerr << "Exception detected in determineComplex(); ";
         }
       } else if (mole->m_typeComp != Molecule::free) {
-        assert(mole->nei_ptr && mole->nei_ptr->m_typeComp != Molecule::free);
+        assert(mole->m_typeRep != Molecule::s && mole->nei_ptr &&
+               mole->nei_ptr->m_typeComp != Molecule::free &&
+               mole->nei_ptr->m_typeRep != Molecule::s);
 
         // either mole or its nei is the catalyst, not both (XOR)
         assert((mole->m_cata_rate_index <= 7) !=
                (mole->nei_ptr->m_cata_rate_index <= 7));
 
-        double diss_k{
-            (mole->m_cata_rate_index <= 7)
-                ? (1 - Para::alpha * mole->getParamIfCata()) // 1-k
-                : (1 - Para::alpha * mole->nei_ptr->getParamIfCata())};
-        cumuProb += Para::alpha * diss_k;
+        double diss_k{(mole->m_cata_rate_index <= 7)
+                          ? (1 - mole->getParamIfCata()) // 1-k
+                          : (1 - mole->nei_ptr->getParamIfCata())};
+        std::cout << diss_k << '\n';
+        cumuProb += Para::alpha * Para::delta * diss_k; // scaling (1-k) by beta
         /* std::cout << cumuProb << '\n'; */
         if (myFate <= cumuProb) {
-          decay(mole, 1); // decay function for dissociation
+          decay(mole, 1); // decay function for complex dissociation
           return;
         }
-        /* if (!someNeiWM->nei_ptr) { */
-        /*   cumuProb += Para::alpha * Para::gamma; */
-        /* if (myFate <= cumuProb) */
+        if (someNeiWM->m_typeRep == Molecule::s) {
+          assert(someNeiWM->m_typeComp == Molecule::free);
+          std::cout << "replicating\n";
+          cumuProb += Para::gamma;
+          if (myFate <= cumuProb) {
+            replication(mole, someNeiWM);
+          }
+        }
       }
     }
   }
