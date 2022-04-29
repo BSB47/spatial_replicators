@@ -78,7 +78,6 @@ public:
   /* return *this; */
   /* } */
 
-  const TypeReplicator &getTypeReplicator() const { return m_typeRep; }
   const double getParamIfCata() const { return m_rateList[m_cata_rate_index]; }
   void setTypeRep(TypeReplicator myType) {
     m_typeRep = myType;
