@@ -116,7 +116,7 @@ int newCA::testComplex(int type1, int type2) { // cType error checking
       }
     }
   }
-  std::cout << numb << std::endl;
+  /* std::cout << numb << std::endl; */
   return numb;
 }
 
