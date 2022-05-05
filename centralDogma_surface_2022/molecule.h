@@ -23,7 +23,7 @@ public:
   };
 
 private:
-  double m_rateList[8]{1, 1, 1, 1, 1, 1, 1, 1};
+  double m_rateList[8]{0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8};
   /* Below are the rates and their corresponding indices */
   /* 0: m_kppp    last two letters stand for template/product */
   /* 1: m_kppq */

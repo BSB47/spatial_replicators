@@ -33,43 +33,49 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
     }
   }
 
-  std::vector<CashPanelInfo> panel_info(1);
-  panel_info[CA].n_row = nrow;
-  panel_info[CA].n_col = ncol;
-  panel_info[CA].o_row = 0;
-  panel_info[CA].o_col = 0;
+  if (Para::visualization == 1) {
+    std::vector<CashPanelInfo> panel_info(1);
+    panel_info[CA].n_row = nrow;
+    panel_info[CA].n_col = ncol;
+    panel_info[CA].o_row = 0;
+    panel_info[CA].o_col = 0;
 
-  // display_p is a pointer to the CASH window
-  display_p = new CashDisplay(
-      Para::sys_nrow, Para::sys_ncol, panel_info,
-      Para::scale); // window_row/col are sys_nrow/col for testing.
-  display_p->color_rgb(blue, 0, 0, 255);
-  display_p->color_rgb(white, 255, 255, 255);
-  /* display_p->open_window(); */
-  display_p->open_png();
+    // display_p is a pointer to the CASH window
+    display_p = new CashDisplay(
+        Para::sys_nrow, Para::sys_ncol, panel_info,
+        Para::scale); // window_row/col are sys_nrow/col for testing.
+    display_p->color_rgb(blue, 0, 0, 255);
+    display_p->color_rgb(white, 255, 255, 255);
+    display_p->open_window();
+    display_p->open_png();
+  }
 }
 
 void newCA::visualize() {
   plane_to_display();
-  /* display_p->draw_window(); */
+  display_p->draw_window();
   display_p->draw_png();
   return;
 }
 
-using newcaFcn = int (newCA::*)(int, int); // fcn pointer might be redundant
+using newcaFcn = int (newCA::*)(int, int,
+                                char); // fcn pointer might be redundant
 void newCA::writeFile(const long t, newcaFcn fcn) {
+  /* std::cout << "entering output \n"; */
   if (!output) {
     std::cerr << "Could not access output.txt\n";
   }
 
   output << t * Para::alpha << ' ';
 
-  // loop through combinations of pp (0,0 in TypeReplicator) ... qq (1, 1)
+  // loop through combinations of ppp (0,0, p) ... qqq (1, 1, q)
   for (int type1{0}; type1 <= 1; type1++) {
     for (int type2{0}; type2 <= 1; type2++) {
-      output << static_cast<double>((this->*fcn)(type1, type2)) /
-                    Para::grid_size
-             << ' ';
+      for (int i{'p'}; i <= 'q'; i++) {
+        output << static_cast<double>((this->*fcn)(type1, type2, i)) /
+                      Para::grid_size
+               << ' ';
+      }
     }
   }
 
@@ -109,26 +115,38 @@ int newCA::testDensity(char type) {
   return testDensity;
 }
 
-int newCA::testComplex(int type1, int type2) {
+int newCA::testComplex(int type1, int type2, char tmpl) {
+  assert(tmpl == 'q' || tmpl == 'p');
   unsigned numb{};
   for (unsigned row{1}; row <= nrow; row++) {
     for (unsigned col{1}; col <= ncol; col++) {
-      if (plane.cell(row, col)->nei_ptr &&
-          plane.cell(row, col)->m_typeRep == type1 &&
-          plane.cell(row, col)->nei_ptr->m_typeRep == type2 &&
-          plane.cell(row, col)->m_typeComp == Molecule::cata) {
-        assert(plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempP ||
-               plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempQ);
-        ++numb;
+      Molecule *cata{plane.cell(row, col).get()};
+      if (cata->nei_ptr && cata->m_typeRep == type1 &&
+          cata->nei_ptr->m_typeRep == type2 &&
+          cata->m_typeComp == Molecule::cata) {
+        assert(cata->nei_ptr->m_typeComp == Molecule::tempP ||
+               cata->nei_ptr->m_typeComp == Molecule::tempQ);
+        if (tmpl == 'p') {
+          if (cata->nei_ptr->m_typeComp == Molecule::tempP) {
+            ++numb;
+            /* std::cout << numb << '\n'; */
+          }
+        } else if (tmpl == 'q') {
+          if (cata->nei_ptr->m_typeComp == Molecule::tempP) {
+            ++numb;
+            /* std::cout << numb << '\n'; */
+          }
+        }
       }
     }
   }
-  /* std::cout << numb << std::endl; */
   return numb;
 }
 
 void newCA::plane_to_display() { // Does not paint display! Just
                                  // transports plane data to it.
+                                 // Also perhaps not a good idea to color
+                                 // according to typeRep
   for (unsigned row{1}; row <= nrow; row++) {
     for (unsigned col{1}; col <= ncol; col++) {
       switch (plane.cell(row, col)->m_typeRep) {
@@ -399,7 +417,7 @@ void newCA::formingComplex(int complex, Molecule *mole, Molecule *someNeiWM) {
 
 void newCA::mutation(Molecule *mole) {
   assert(mole->m_typeComp == Molecule::free);
-  std::cout << "mutating\n";
+  /* std::cout << "mutating\n"; */
   if (DiceRoller::probabilityGen(DiceRoller::twister) <=
       Para::mutation_probability) {
     for (int i{0}; i < std::size(mole->m_rateList); i++) {
@@ -514,11 +532,11 @@ void newCA::update_squares() {
         assert((mole->m_cata_rate_index <= 7) !=
                (mole->nei_ptr->m_cata_rate_index <= 7));
 
-        double diss_k{(mole->m_cata_rate_index <= 7)
-                          ? (1 - mole->getParamIfCata()) // 1-k
-                          : (1 - mole->nei_ptr->getParamIfCata())};
+        double diss_k{(mole->m_cata_rate_index <= 7) // scaling (1-k) by beta)
+                          ? (1 - mole->getParamIfCata() / Para::beta)
+                          : (1 - mole->nei_ptr->getParamIfCata() / Para::beta)};
         /* std::cout << diss_k << '\n'; */
-        cumuProb += Para::alpha * Para::delta * diss_k; // scaling (1-k) by beta
+        cumuProb += Para::alpha * diss_k;
         /* std::cout << cumuProb << '\n'; */
         if (myFate <= cumuProb) {
           decay(mole, 1); // decay function for complex dissociation
@@ -527,7 +545,7 @@ void newCA::update_squares() {
         if (someNeiWM->m_typeRep == Molecule::s) {
           assert(someNeiWM->m_typeComp == Molecule::free);
           /* std::cout << "replicating\n"; */
-          cumuProb += Para::gamma;
+          cumuProb += Para::alpha * Para::gamma;
           if (myFate <= cumuProb) {
             replication(mole, someNeiWM);
           }
