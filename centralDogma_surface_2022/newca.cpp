@@ -342,6 +342,7 @@ void newCA::formingComplex(int complex, Molecule *mole, Molecule *someNeiWM) {
   case 4:
   case 7:
     mole->m_typeComp = Molecule::cata;
+    mole->m_myCataParam = complex;
     someNeiWM->m_typeComp = Molecule::tempP;
     /* std::cout << "complex formed mole-nei" << std::endl; */
     return;
@@ -350,6 +351,7 @@ void newCA::formingComplex(int complex, Molecule *mole, Molecule *someNeiWM) {
   case 5:
   case 6:
     mole->m_typeComp = Molecule::cata;
+    mole->m_myCataParam = complex;
     someNeiWM->m_typeComp = Molecule::tempQ;
     /* std::cout << "complex formed" << std::endl; */
     return;
@@ -358,6 +360,7 @@ void newCA::formingComplex(int complex, Molecule *mole, Molecule *someNeiWM) {
   case 104:
   case 107:
     someNeiWM->m_typeComp = Molecule::cata;
+    someNeiWM->m_myCataParam = (complex - 100);
     mole->m_typeComp = Molecule::tempP;
     /* std::cout << "complex formed nei-mole" << std::endl; */
     return;
@@ -366,6 +369,7 @@ void newCA::formingComplex(int complex, Molecule *mole, Molecule *someNeiWM) {
   case 105:
   case 106:
     someNeiWM->m_typeComp = Molecule::cata;
+    someNeiWM->m_myCataParam = (complex - 100);
     mole->m_typeComp = Molecule::tempQ;
     /* std::cout << "complex formed" << std::endl; */
     return;
@@ -374,6 +378,31 @@ void newCA::formingComplex(int complex, Molecule *mole, Molecule *someNeiWM) {
     someNeiWM->nei_ptr = nullptr;
     return;
   }
+}
+
+void newCA::replication(Molecule *mole, Molecule *someNei) {
+  assert(mole->nei_ptr && mole->nei_ptr->nei_ptr == mole);
+  assert((mole->m_typeComp == Molecule::cata) !=
+         (mole->nei_ptr->m_typeComp == Molecule::cata));
+  Molecule *&templ{(mole->m_typeComp != Molecule::cata) ? mole : mole->nei_ptr};
+  std::copy(std::begin(templ->m_rateList), std::end(templ->m_rateList),
+            std::begin(someNei->m_rateList));
+  for (int i{0}; i < std::size(templ->m_rateList); i++)
+    assert(someNei->m_rateList[i] == templ->m_rateList[i]);
+  assert((templ->m_typeComp == Molecule::tempP) !=
+         (templ->m_typeComp == Molecule::tempQ));
+  if (templ->m_typeComp == Molecule::tempP)
+    someNei->m_typeRep = Molecule::p;
+  else if (templ->m_typeComp == Molecule::tempQ)
+    someNei->m_typeRep = Molecule::q;
+
+  mole->bon_nei = 0;
+  mole->nei_ptr->bon_nei = 0;
+  mole->m_typeComp = Molecule::free;
+  mole->nei_ptr->m_typeComp = Molecule::free;
+  mole->nei_ptr->nei_ptr = nullptr;
+  mole->nei_ptr = nullptr;
+  assert(!(mole->nei_ptr) && someNei->m_typeComp == Molecule::free);
 }
 
 void newCA::update_squares() {
@@ -452,8 +481,12 @@ void newCA::update_squares() {
         } catch (int) {
           std::cerr << "Exception detected in determineComplex(); ";
         }
+      } else if ((mole->m_typeComp != Molecule::free) &&
+                 (someNeiWM->m_typeRep == Molecule::s)) {
+        cumuProb += 0.5; // CHANGE
+        if (myFate <= cumuProb)
+          replication(mole, someNeiWM);
       }
-      /* std::cout << cumuProb << std::endl; */
     }
   }
 }

@@ -57,6 +57,7 @@ public:
                       Molecule *someNei);
   void formingComplex(int complex, Molecule *mole,
                       Molecule *someNeiWM); // overload for well-mixed for now
+  void replication(Molecule *mole, Molecule *someNei);
   void update_squares();
 
   friend void singleRun();

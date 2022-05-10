@@ -33,14 +33,13 @@ private:
   /* 5: m_kqpq */
   /* 6: m_kqqq */
   /* 7: m_kqqp */
+  unsigned m_myCataParam{10};
 
   TypeReplicator m_typeRep{};
   TypeComplex m_typeComp{free};
 
   unsigned bon_nei{0};
   Molecule *nei_ptr{nullptr};
-
-  double m_mutation_probability{};
 
 public:
   Molecule() {
