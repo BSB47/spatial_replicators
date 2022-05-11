@@ -16,17 +16,15 @@
 
 newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
     : nrow{a_nrow}, ncol{a_ncol}, plane(a_nrow, a_ncol) {
+  std::uniform_int_distribution test{1, 2};
   for (unsigned row = 1; row <= nrow; row++) {
     for (unsigned col = 1; col <= ncol; col++) {
       plane.cell(row, col) = std::make_unique<Molecule>();
-      switch (DiceRoller::typeInitializer(DiceRoller::twister)) {
+      switch (test(DiceRoller::twister)) {
       case 1:
         plane.cell(row, col)->setTypeRep(Molecule::p);
         break;
       case 2:
-        plane.cell(row, col)->setTypeRep(Molecule::q);
-        break;
-      case 3:
         plane.cell(row, col)->setTypeRep(Molecule::s);
         break;
       }
@@ -65,11 +63,7 @@ void newCA::writeFile(const long t, std::string_view cType, newcaFcn fcn) {
 
   output << t * Para::alpha << ' '
          << static_cast<double>((this->*fcn)(0, 0)) / Para::grid_size << ' '
-         << static_cast<double>((this->*fcn)(0, 1)) / Para::grid_size << ' '
-         << static_cast<double>((this->*fcn)(1, 1)) / Para::grid_size << ' '
-         << static_cast<double>((this->*fcn)(1, 0)) / Para::grid_size << ' '
          << static_cast<double>(testSimple(0)) / Para::grid_size << ' '
-         << static_cast<double>(testSimple(1)) / Para::grid_size << ' '
          << static_cast<double>(testSimple(2)) / Para::grid_size << '\n';
   /* << static_cast<double>(testDensity(1)) / Para::grid_size << '\n'; */
   if (t % 100 == 0) {
@@ -101,7 +95,7 @@ int newCA::testDensity(char type) {
   return testDensity;
 }
 
-int newCA::testComplex(int type1, int type2) { // cType error checking
+int newCA::testComplex(int type1, int type2) { // type1 & 2 error checking
                                                // is handled at point of input
   unsigned numb{};
   for (unsigned row{1}; row <= nrow; row++) {
@@ -110,8 +104,8 @@ int newCA::testComplex(int type1, int type2) { // cType error checking
           plane.cell(row, col)->getTypeReplicator() == type1 &&
           plane.cell(row, col)->nei_ptr->getTypeReplicator() == type2 &&
           plane.cell(row, col)->m_typeComp == Molecule::cata) {
-        assert(plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempP ||
-               plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempQ);
+        assert((plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempP) !=
+               (plane.cell(row, col)->nei_ptr->m_typeComp == Molecule::tempQ));
         ++numb;
       }
     }
@@ -214,68 +208,69 @@ int newCA::determineComplex(const double myFate, double &cumuProb,
   case 0:
     switch (nei_type) {
     case 0: // if mole & someNei are both P
-      /* cumuProb += Para::alpha * mole->m_rateList[0]; */
-      /* if (myFate <= cumuProb) */
-      /*   return 0; */
-      /* cumuProb += Para::alpha * someNei->m_rateList[0]; */
-      /* if (myFate <= cumuProb) */
-      /*   return 100; */
-      for (unsigned i{0}; i <= 1; i++) {
-        cumuProb += Para::alpha * mole->m_rateList[i];
-        if (myFate <= cumuProb)
-          return i;
-      }
-      for (unsigned i{0}; i <= 1; i++) {
-        cumuProb += Para::alpha * someNei->m_rateList[i];
-        if (myFate <= cumuProb)
-          return (i + 100);
-      }
-      /* std::cout << myFate << ' ' << cumuProb << std::endl; */
-      return 1000; // complex did not form between two P molecules
-    case 1:        // if mole is P and someNei is Q
-      for (unsigned i{2}; i <= 3; i++) {
-        cumuProb += Para::alpha * mole->m_rateList[i];
-        if (myFate <= cumuProb)
-          return i;
-      }
-      for (unsigned i{4}; i <= 5; i++) {
-        cumuProb += Para::alpha * someNei->m_rateList[i];
-        if (myFate <= cumuProb)
-          return (i + 100);
-      }
-      /* std::cout << myFate << ' ' << cumuProb << std::endl; */
-      return 1001; // complex did not form between P and Q
-    default:
-      return 1005; // someNei is a S
-    }
-  case 1:
-    switch (someNei->getTypeReplicator()) { // if mole is Q and someNei is P
-    case 0:
-      for (unsigned i{4}; i <= 5; i++) {
-        cumuProb += Para::alpha * mole->m_rateList[i];
-        if (myFate <= cumuProb)
-          return i;
-      }
-      for (unsigned i{2}; i <= 3; i++) {
-        cumuProb += Para::alpha * someNei->m_rateList[i];
-        if (myFate <= cumuProb)
-          return (i + 100);
-      }
-      /* std::cout << myFate << ' ' << cumuProb << std::endl; */
-      return 1002; // complex did not form between Q and P
-    case 1:        // if both are Q
-      for (unsigned i{6}; i <= 7; i++) {
-        cumuProb += Para::alpha * mole->m_rateList[i];
-        if (myFate <= cumuProb)
-          return i;
-      }
-      for (unsigned i{6}; i <= 7; i++) {
-        cumuProb += Para::alpha * someNei->m_rateList[i];
-        if (myFate <= cumuProb)
-          return (i + 100);
-      }
-      /* std::cout << myFate << ' ' << cumuProb << std::endl; */
-      return 1003; // complex did not form between 2 Qs
+      cumuProb += Para::alpha * mole->m_rateList[0];
+      if (myFate <= cumuProb)
+        return 0;
+      cumuProb += Para::alpha * someNei->m_rateList[0];
+      if (myFate <= cumuProb)
+        return 100;
+      /* for (unsigned i{0}; i <= 1; i++) { */
+      /*   cumuProb += Para::alpha * mole->m_rateList[i]; */
+      /*   if (myFate <= cumuProb) */
+      /*     return i; */
+      /* } */
+      /* for (unsigned i{0}; i <= 1; i++) { */
+      /*   cumuProb += Para::alpha * someNei->m_rateList[i]; */
+      /*   if (myFate <= cumuProb) */
+      /*     return (i + 100); */
+      /* } */
+      /* /1* std::cout << myFate << ' ' << cumuProb << std::endl; *1/ */
+      /* return 1000; // complex did not form between two P molecules */
+      /* case 1:        // if mole is P and someNei is Q */
+      /* for (unsigned i{2}; i <= 3; i++) { */
+      /*   cumuProb += Para::alpha * mole->m_rateList[i]; */
+      /*   if (myFate <= cumuProb) */
+      /*     return i; */
+      /* } */
+      /* for (unsigned i{4}; i <= 5; i++) { */
+      /*   cumuProb += Para::alpha * someNei->m_rateList[i]; */
+      /*   if (myFate <= cumuProb) */
+      /*     return (i + 100); */
+      /* } */
+      /* /1* std::cout << myFate << ' ' << cumuProb << std::endl; *1/ */
+      /* return 1001; // complex did not form between P and Q */
+      /* default: */
+      /* return 1005; // someNei is a S */
+      /* } */
+      /* case 1: */
+      /* switch (someNei->getTypeReplicator()) { // if mole is Q and someNei is
+       * P */
+      /* case 0: */
+      /* for (unsigned i{4}; i <= 5; i++) { */
+      /*   cumuProb += Para::alpha * mole->m_rateList[i]; */
+      /*   if (myFate <= cumuProb) */
+      /*     return i; */
+      /* } */
+      /* for (unsigned i{2}; i <= 3; i++) { */
+      /*   cumuProb += Para::alpha * someNei->m_rateList[i]; */
+      /*   if (myFate <= cumuProb) */
+      /*     return (i + 100); */
+      /* } */
+      /* /1* std::cout << myFate << ' ' << cumuProb << std::endl; *1/ */
+      /* return 1002; // complex did not form between Q and P */
+      /* case 1:        // if both are Q */
+      /* for (unsigned i{6}; i <= 7; i++) { */
+      /*   cumuProb += Para::alpha * mole->m_rateList[i]; */
+      /*   if (myFate <= cumuProb) */
+      /*     return i; */
+      /* } */
+      /* for (unsigned i{6}; i <= 7; i++) { */
+      /*   cumuProb += Para::alpha * someNei->m_rateList[i]; */
+      /*   if (myFate <= cumuProb) */
+      /*     return (i + 100); */
+      /* } */
+      /* /1* std::cout << myFate << ' ' << cumuProb << std::endl; *1/ */
+      /* return 1003; // complex did not form between 2 Qs */
     default:
       return 1005; // someNei is a S
     }
@@ -463,29 +458,34 @@ void newCA::update_squares() {
       cumuProb += Para::alpha * Para::decay_probability;
       if (myFate <= cumuProb) {
         decay(plane.cell(row, col).get());
-      } else if ((mole->m_typeComp == Molecule::free) &&
-                 (someNeiWM->m_typeRep != Molecule::s) &&
-                 (someNeiWM->m_typeComp == Molecule::free)) {
-        try {
-          /* formingComplex(determineComplex(mole, someNeiWM, mole_type),
-           * mole,
-           */
-          /*                neiNum, someNeiWM); */
-          int myComplex{
-              determineComplex(myFate, cumuProb, mole, someNeiWM, mole_type)};
-          if (myComplex > 1003) // note that anything beyond 1003 means
-                                // something in determineComplex is broken
-                                // e.g. someNei is a s!
-            throw -1;
-          formingComplex(myComplex, mole, someNeiWM);
-        } catch (int) {
-          std::cerr << "Exception detected in determineComplex(); ";
+      } else {
+        if ((mole->m_typeComp == Molecule::free) &&
+            (someNeiWM->m_typeRep != Molecule::s) &&
+            (someNeiWM->m_typeComp == Molecule::free)) {
+          try {
+            /* formingComplex(determineComplex(mole, someNeiWM, mole_type),
+             * mole,
+             */
+            /*                neiNum, someNeiWM); */
+            int myComplex{
+                determineComplex(myFate, cumuProb, mole, someNeiWM, mole_type)};
+            if (myComplex > 1003) // note that anything beyond 1003 means
+                                  // something in determineComplex is broken
+                                  // e.g. someNei is a s!
+              throw -1;
+            formingComplex(myComplex, mole, someNeiWM);
+            continue;
+          } catch (int) {
+            /* std::cerr << "Exception detected in determineComplex(); "; */
+            continue;
+          }
         }
-      } else if ((mole->m_typeComp != Molecule::free) &&
-                 (someNeiWM->m_typeRep == Molecule::s)) {
-        cumuProb += 0.5; // CHANGE
-        if (myFate <= cumuProb)
-          replication(mole, someNeiWM);
+        cumuProb += Para::alpha * 0.5; // CHANGE
+        if ((mole->m_typeComp != Molecule::free) &&
+            (someNeiWM->m_typeRep == Molecule::s)) {
+          if (myFate <= cumuProb)
+            replication(mole, someNeiWM);
+        }
       }
     }
   }
