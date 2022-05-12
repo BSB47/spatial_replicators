@@ -68,7 +68,7 @@ void newCA::writeFile(const long t, newcaFcn fcn) {
 
   output << t * Para::alpha << ' ';
 
-  // loop through combinations of ppp (0,0, p) ... qqq (1, 1, q)
+  // loop through combinations of ppp (0, 0, p) ... qqq (1, 1, q)
   for (int type1{0}; type1 <= 1; type1++) {
     for (int type2{0}; type2 <= 1; type2++) {
       for (int i{'p'}; i <= 'q'; i++) {
