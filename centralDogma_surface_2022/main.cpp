@@ -25,8 +25,15 @@ void singleRun(std::string_view cType) {
     /* if (t % Para::display_interval == 0) { */
     /* randomizedGrid.visualize(); */
     /* } */
+
     randomizedGrid.writeFile(t, "qp", &newCA::testComplex);
+    /* randomizedGrid.visualize(); */
     randomizedGrid.update_squares();
+    /* for (int i{0}; i < Para::grid_size; i++) */
+    /*   randomizedGrid.reallycba(); */
+    /* randomizedGrid.diffuse(row, col); */
+
+    /* randomizedGrid.update_squares(); */
   }
 }
 

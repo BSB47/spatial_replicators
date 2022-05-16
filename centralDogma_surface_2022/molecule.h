@@ -50,7 +50,7 @@ public:
 
   Molecule(TypeReplicator typeR, TypeComplex typeC)
       : m_typeRep{typeR}, m_typeComp{typeC} {
-    std::cout << "I'm born\n";
+    /* std::cout << "I'm born\n"; */
     for (int i{0}; i < std::size(m_rateList); i++) {
       m_rateList[i] *= Para::beta;
     }
