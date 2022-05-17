@@ -35,6 +35,8 @@ private:
   /* 7: m_kqqp */
   unsigned m_myCataParam{10};
 
+  double dummy{0.5};
+
   TypeReplicator m_typeRep{};
   TypeComplex m_typeComp{free};
 

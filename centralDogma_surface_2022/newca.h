@@ -48,7 +48,8 @@ public:
   int testDensity(char type); // counts number of p's and q's indiscriminately
   int testComplex(int type1, int type2,
                   int cType); // counts number of a certain complex
-  void plane_to_display();    // letting display_p put pixels into plane
+  void testDummy(int x = 0);
+  void plane_to_display(); // letting display_p put pixels into plane
   void reallycba();
 
   /* actual simulation */
@@ -61,6 +62,8 @@ public:
   void formingComplex(int complex, Molecule *mole,
                       Molecule *someNeiWM); // overload for well-mixed for now
   void replication(Molecule *mole, Molecule *someNei);
+  void linearMutation(Molecule *someNei);
+  void exponentialMutation(Molecule *someNei);
   void update_squares();
 
   friend void singleRun();

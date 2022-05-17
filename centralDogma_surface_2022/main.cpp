@@ -20,8 +20,9 @@ char **getCmd(char **begin, char **end, const std::string_view opt) {
 void singleRun(std::string_view cType) {
   long init_time{0};
   newCA randomizedGrid(Para::sys_nrow, Para::sys_ncol);
+  randomizedGrid.testDummy(1);
 
-  for (long t{init_time}; t <= 2000; t++) {
+  for (long t{init_time}; t <= 50000; t++) {
     /* if (t % Para::display_interval == 0) { */
     /* randomizedGrid.visualize(); */
     /* } */
@@ -35,6 +36,7 @@ void singleRun(std::string_view cType) {
 
     /* randomizedGrid.update_squares(); */
   }
+  randomizedGrid.testDummy(1);
 }
 
 int main(int argc, char *argv[]) {

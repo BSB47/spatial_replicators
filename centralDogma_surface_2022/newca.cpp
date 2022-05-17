@@ -103,14 +103,14 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
   display_p->color_rgb(blue, 0, 0, 255);
   display_p->color_rgb(red, 255, 0, 0);
   display_p->color_rgb(white, 255, 255, 255);
-  display_p->open_window();
+  /* display_p->open_window(); */
   display_p->open_png();
   /* std::cout << testDensity(0) << '\n'; */
 }
 
 void newCA::visualize() {
   plane_to_display();
-  display_p->draw_window();
+  /* display_p->draw_window(); */
   display_p->draw_png();
   return;
 }
@@ -135,7 +135,29 @@ void newCA::writeFile(const long t, std::string_view cType, newcaFcn fcn) {
          << static_cast<double>(testSimple(2)) / Para::grid_size << '\n';
   if (t % 100 == 0) {
     output.flush();
-    std::cout << "flushed \n";
+    /* std::cout << "flushed \n"; */
+  }
+}
+
+void newCA::testDummy(int x) {
+  for (int i{0}; i <= 9; i++) {
+    int counts{};
+    for (unsigned row{1}; row <= nrow; row++) {
+      for (unsigned col{1}; col <= ncol; col++) {
+        if (plane.cell(row, col)->dummy >= (i / 10.0) &&
+            plane.cell(row, col)->dummy < ((i / 10.0) + 0.1))
+          counts++;
+      }
+    }
+    std::cout << "0." << i << "--" << (i / 10.0) + 0.1 << '|';
+    if (x == 1)
+      counts = log(counts);
+    for (int g{0}; g < counts; g++)
+      if (x == 0 && g % 10 == 0)
+        std::cout << '=';
+      else if (x == 1)
+        std::cout << '=';
+    std::cout << '\n';
   }
 }
 
@@ -478,6 +500,41 @@ void newCA::replication(Molecule *mole, Molecule *someNei) {
   mole->nei_ptr->nei_ptr = nullptr;
   mole->nei_ptr = nullptr;
   assert(!(mole->nei_ptr) && someNei->m_typeComp == Molecule::free);
+
+  /* linearMutation(someNei); */
+  exponentialMutation(someNei);
+}
+
+void newCA::linearMutation(Molecule *someNei) {
+  if (DiceRoller::probabilityGen(DiceRoller::twister) <=
+      Para::mutation_probability) {
+    /* for (int i{0}; i < std::size(someNei->m_rateList); i++) { */
+    /*   mole->m_rateList[i] += DiceRoller::mutationGen(DiceRoller::twister); */
+    /*   if (mole->m_rateList[i] > 1) */
+    /*     mole->m_rateList[i] = 2 - mole->m_rateList[i]; */
+    /*   else if (mole->m_rateList[i] < 0) */
+    /*     mole->m_rateList[i] = 0; */
+    /*   std::cout << mole->m_rateList[i] << '\n'; */
+    /*   assert(mole->m_rateList[i] <= 1); */
+    /* } */
+    someNei->dummy += DiceRoller::mutaGen(DiceRoller::twister);
+    if (someNei->dummy > 1)
+      someNei->dummy = 2 - someNei->dummy;
+    else if (someNei->dummy < 0)
+      someNei->dummy = 0;
+    /* std::cout << someNei->dummy << '\n'; */
+    assert(someNei->dummy <= 1 && someNei->dummy >= 0);
+  }
+}
+
+void newCA::exponentialMutation(Molecule *someNei) {
+  if (DiceRoller::probabilityGen(DiceRoller::twister) <=
+      Para::mutation_probability) {
+    someNei->dummy *= exp(DiceRoller::mutaGen(DiceRoller::twister));
+    if (someNei->dummy > 1)
+      someNei->dummy = 2 - someNei->dummy;
+    assert(someNei->dummy <= 1 && someNei->dummy >= 0);
+  }
 }
 
 void newCA::update_squares() {
@@ -602,7 +659,8 @@ void newCA::reallycba() {
   if (plane.cell(row, col)->m_typeComp != Molecule::free) {
     if (myFate <= Para::alpha * Para::beta * 0.01) {
       /* assert(plane.cell(row, col)->m_typeComp != Molecule::free && */
-      /*        plane.cell(row, col)->nei_ptr->m_typeComp != Molecule::free); */
+      /*        plane.cell(row, col)->nei_ptr->m_typeComp !=
+       * Molecule::free); */
       plane.cell(row, col)->m_typeComp = Molecule::free;
       plane.cell(row, col)->nei_ptr->m_typeComp = Molecule::free;
       plane.cell(row, col)->nei_ptr->nei_ptr = nullptr;
