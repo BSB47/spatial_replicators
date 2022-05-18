@@ -12,8 +12,7 @@ inline double diffusion_probability{0.1};
 inline double mutation_probability{0.5};
 inline double alpha{0.9999 / 1.62};
 inline double beta{0.5};
-inline double delta{0.5}; // beta but for complexes
-inline double gamma{0.25};
+inline double gamma{0.5};
 
 //------MISC
 inline unsigned visualization{0};

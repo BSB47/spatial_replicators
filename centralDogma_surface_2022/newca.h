@@ -41,14 +41,16 @@ public:
   void visualize(); // initializing and opening window/png
   void writeFile(const long t,
                  int (newCA::*fcn)(int, int,
-                                   char)); // writing density of a certain
-                                           // replicator/complex to a file
+                                   int)); // writing density of a certain
+                                          // replicator/complex to a file
 
   int testSimple(char type);  // counts number of simple p's and q's
   int testDensity(char type); // counts number of p's and q's indiscriminately
   int testComplex(int type1, int type2,
-                  char tmpl); // counts number of a certain complex
-  void plane_to_display();    // letting display_p put pixels into plane
+                  int cType); // counts number of a certain complex
+  void testDummy(int x = 0);
+  void plane_to_display(); // letting display_p put pixels into plane
+  void reallycba();
 
   /* actual simulation */
   void decay(Molecule *mole, unsigned dis = 0); // dis=1 for dissociation
@@ -59,8 +61,9 @@ public:
                       Molecule *someNei);
   void formingComplex(int complex, Molecule *mole,
                       Molecule *someNeiWM); // overload for well-mixed for now
-  void mutation(Molecule *mole);
   void replication(Molecule *mole, Molecule *someNei);
+  void linearMutation(Molecule *someNei);
+  void exponentialMutation(Molecule *someNei);
   void update_squares();
 
   friend void singleRun();

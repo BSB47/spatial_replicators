@@ -34,18 +34,18 @@ private:
   /* 6: m_kqqq */
   /* 7: m_kqqp */
 
-  unsigned m_cata_rate_index{10};
+  unsigned m_myCataParam{10};
   // the index of the catalytic parameter if this molecule is the
   // catalyst in a complex; initializes or decays/dissociates to a
   // nonsense value
+
+  double dummy{0.5};
 
   TypeReplicator m_typeRep{};
   TypeComplex m_typeComp{free};
 
   unsigned bon_nei{0};
   Molecule *nei_ptr{nullptr};
-
-  double m_mutation_probability{};
 
 public:
   Molecule() {
@@ -56,7 +56,7 @@ public:
 
   Molecule(TypeReplicator typeR, TypeComplex typeC)
       : m_typeRep{typeR}, m_typeComp{typeC} {
-    std::cout << "I'm born\n";
+    /* std::cout << "I'm born\n"; */
     for (int i{0}; i < std::size(m_rateList); i++) {
       m_rateList[i] *= Para::beta;
     }
@@ -78,7 +78,7 @@ public:
   /* return *this; */
   /* } */
 
-  const double getParamIfCata() const { return m_rateList[m_cata_rate_index]; }
+  const TypeReplicator &getTypeReplicator() const { return m_typeRep; }
   void setTypeRep(TypeReplicator myType) {
     m_typeRep = myType;
   } // setters no longer useful since newCA is now a friend class!

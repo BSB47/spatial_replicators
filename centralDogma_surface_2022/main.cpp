@@ -45,7 +45,6 @@ void useCmd(char **myOpt,
       {"-M", &Para::mutation_probability},
       {"-A", &Para::alpha},
       {"-B", &Para::beta},
-      {"-E", &Para::delta},
       {"-G", &Para::gamma}};
 
   using namespace std::literals;
@@ -106,6 +105,7 @@ void useCmd(char **myOpt,
 void singleRun() {
   long init_time{0};
   newCA randomizedGrid(Para::sys_nrow, Para::sys_ncol);
+  randomizedGrid.testDummy(1);
 
   for (long t{init_time}; t <= Para::max_time; t++) {
     if (t % Para::display_interval == 0) {
@@ -115,6 +115,7 @@ void singleRun() {
       randomizedGrid.update_squares();
     }
   }
+  randomizedGrid.testDummy(1);
 }
 
 int main(int argc, char *argv[]) {
@@ -125,14 +126,14 @@ int main(int argc, char *argv[]) {
   }
 
   if (argc > 2) {
-    std::string_view cmdList{"-v-m-s-d-t-C-R-D-I-M-A-B-E-G"};
+    std::string_view cmdList{"-v-m-s-d-t-C-R-D-I-M-A-B-G"};
     for (int i{0}; i < cmdList.length(); i++) {
       if (cmdList[i] == '-') {
         char **cmdItr = getCmd(argv, argv + argc, cmdList.substr(i, 2));
         /* std::cout << *cmdItr; */
-        if (cmdItr && i <= 12) // so far, only the frist 2 of cmdList are bool
+        if (cmdItr && i <= 12) // so far, only the frist 5 of cmdList are bool
           useCmd(cmdItr, 'i');
-        else if (cmdItr && i <= 26)
+        else if (cmdItr && i <= 24)
           useCmd(cmdItr, 'd');
       }
     }
