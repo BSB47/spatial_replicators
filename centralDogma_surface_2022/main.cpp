@@ -105,7 +105,7 @@ void useCmd(char **myOpt,
 void singleRun() {
   long init_time{0};
   newCA randomizedGrid(Para::sys_nrow, Para::sys_ncol);
-  randomizedGrid.testDummy(1);
+  /* randomizedGrid.testDummy(1); */
 
   for (long t{init_time}; t <= Para::max_time; t++) {
     if (t % Para::display_interval == 0) {

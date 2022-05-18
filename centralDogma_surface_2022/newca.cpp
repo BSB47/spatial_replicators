@@ -97,7 +97,7 @@ void newCA::writeFile(const long t, newcaFcn fcn) {
 
   if (t % 100 == 0) {
     output.flush();
-    /* std::cout << "flushed \n"; */
+    std::cout << "flushed \n";
   }
 }
 
@@ -461,6 +461,8 @@ void newCA::replication(Molecule *mole, Molecule *someNei) {
   mole->nei_ptr->bon_nei = 0;
   mole->m_typeComp = Molecule::free;
   mole->nei_ptr->m_typeComp = Molecule::free;
+  mole->m_myCataParam = 10;
+  mole->nei_ptr->m_myCataParam = 10;
   mole->nei_ptr->nei_ptr = nullptr;
   mole->nei_ptr = nullptr;
   assert(!(mole->nei_ptr) && someNei->m_typeComp == Molecule::free);
@@ -563,6 +565,7 @@ void newCA::update_squares() {
           (mole->m_typeRep != Molecule::s) &&
           (someNeiWM->m_typeRep != Molecule::s) &&
           (someNeiWM->m_typeComp == Molecule::free)) {
+        assert(mole->m_myCataParam == 10 && someNeiWM->m_myCataParam == 10);
         try {
           int myComplex{
               determineComplex(myFate, cumuProb, mole, someNeiWM, mole_type)};
@@ -579,14 +582,23 @@ void newCA::update_squares() {
       }
       /* cumuProb = 0; */
       assert(cumuProb == Para::alpha * Para::decay_probability);
-      cumuProb += Para::alpha * Para::beta * (0.2);
       if ((mole->m_typeComp != Molecule::free)) {
+        assert(mole->m_myCataParam <= 7 != mole->nei_ptr->m_myCataParam <= 7);
+        double dissProb{
+            mole->m_typeComp == Molecule::cata
+                ? (1 - mole->m_rateList[mole->m_myCataParam] / Para::beta)
+                : (1 - mole->nei_ptr->m_rateList[mole->nei_ptr->m_myCataParam] /
+                           Para::beta)};
+        assert(dissProb = 0.2);
+        cumuProb += Para::alpha * Para::beta * dissProb;
         if (myFate <= cumuProb)
         /* replication(mole, someNeiWM); */
         {
           /* std::cout << testSimple(0) << '\n'; */
           mole->m_typeComp = Molecule::free;
+          mole->m_myCataParam = 10;
           mole->nei_ptr->m_typeComp = Molecule::free;
+          mole->nei_ptr->m_myCataParam = 10;
           mole->nei_ptr->nei_ptr = nullptr;
           mole->nei_ptr = nullptr;
           /* std::cout << testSimple(0) << '\n'; */
