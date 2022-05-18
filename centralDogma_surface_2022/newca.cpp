@@ -354,7 +354,7 @@ void newCA::formingComplex(int complex, Molecule *mole, int neiNum,
     mole->m_typeComp = Molecule::cata;
     mole->m_myCataParam = complex;
     someNei->m_typeComp = Molecule::tempP;
-    std::cout << "complex formed" << std::endl;
+    /* std::cout << "complex formed" << std::endl; */
     return;
   case 1:
   case 2:
@@ -363,7 +363,7 @@ void newCA::formingComplex(int complex, Molecule *mole, int neiNum,
     mole->m_typeComp = Molecule::cata;
     mole->m_myCataParam = complex;
     someNei->m_typeComp = Molecule::tempQ;
-    std::cout << "complex formed" << std::endl;
+    /* std::cout << "complex formed" << std::endl; */
     return;
   case 100:
   case 103:
@@ -372,7 +372,7 @@ void newCA::formingComplex(int complex, Molecule *mole, int neiNum,
     someNei->m_typeComp = Molecule::cata;
     someNei->m_myCataParam = (complex - 100);
     mole->m_typeComp = Molecule::tempP;
-    std::cout << "complex formed" << std::endl;
+    /* std::cout << "complex formed" << std::endl; */
     return;
   case 101:
   case 102:
@@ -381,7 +381,7 @@ void newCA::formingComplex(int complex, Molecule *mole, int neiNum,
     someNei->m_typeComp = Molecule::cata;
     someNei->m_myCataParam = (complex - 100);
     mole->m_typeComp = Molecule::tempQ;
-    std::cout << "complex formed" << std::endl;
+    /* std::cout << "complex formed" << std::endl; */
     return;
   case 1000 ... 1003:
     mole->bon_nei = 0;
@@ -507,12 +507,12 @@ void newCA::update_squares() {
   unsigned row{};
   unsigned col{};
 
-  /* // DIFFUSION */
-  /* for (int i{1}; i <= Para::grid_size; i++) { */
-  /*   row = DiceRoller::randomRowOrCol(DiceRoller::twister); */
-  /*   col = DiceRoller::randomRowOrCol(DiceRoller::twister); */
-  /*   diffuse(row, col); */
-  /* } */
+  // DIFFUSION
+  for (int i{1}; i <= Para::grid_size; i++) {
+    row = DiceRoller::randomRowOrCol(DiceRoller::twister);
+    col = DiceRoller::randomRowOrCol(DiceRoller::twister);
+    diffuse(row, col);
+  }
 
   // COMPLEX FORMATION & REPLICATION
   for (int i{1}; i <= Para::grid_size; i++) { // # of times is counted from 1
@@ -525,35 +525,35 @@ void newCA::update_squares() {
     Molecule *mole{plane.cell(row, col).get()};
     auto mole_type{mole->m_typeRep};
 
-    /* unsigned neiNum{ */
-    /*     mole->bon_nei */
-    /*         ? plane.neigh_7_select( */
-    /*               DiceRoller::randomNeiExcl(DiceRoller::twister), */
-    /*               mole->bon_nei) // exclude nei if mole is already in a
-     * complex */
-    /*         : static_cast<unsigned int>( */
-    /*               DiceRoller::randomNei(DiceRoller::twister))}; */
-    /* Molecule *someNei{plane.neigh_wrap(row, col, neiNum).get()}; */
-    Molecule *someNeiWM{
-        plane
-            .cell(DiceRoller::randomRowOrCol(DiceRoller::twister),
-                  DiceRoller::randomRowOrCol(DiceRoller::twister))
-            .get()};
-    while (someNeiWM == mole || someNeiWM == mole->nei_ptr) {
-      someNeiWM = plane // Reassignment only needed in well-mixed system
-                      .cell(DiceRoller::randomRowOrCol(DiceRoller::twister),
-                            DiceRoller::randomRowOrCol(DiceRoller::twister))
-                      .get();
-    }
+    unsigned neiNum{
+        mole->bon_nei
+            ? plane.neigh_7_select(
+                  DiceRoller::randomNeiExcl(DiceRoller::twister),
+                  mole->bon_nei) // exclude nei if mole is already in a complex
+            : static_cast<unsigned int>(
+                  DiceRoller::randomNei(DiceRoller::twister))};
+    Molecule *someNei{plane.neigh_wrap(row, col, neiNum).get()};
+    /* Molecule *someNeiWM{ */
+    /*     plane */
+    /*         .cell(DiceRoller::randomRowOrCol(DiceRoller::twister), */
+    /*               DiceRoller::randomRowOrCol(DiceRoller::twister)) */
+    /*         .get()}; */
+    /* while (someNeiWM == mole || someNeiWM == mole->nei_ptr) { */
+    /*   someNeiWM = plane // Reassignment only needed in well-mixed system */
+    /*                   .cell(DiceRoller::randomRowOrCol(DiceRoller::twister),
+     */
+    /*                         DiceRoller::randomRowOrCol(DiceRoller::twister))
+     */
+    /*                   .get(); */
+    /* } */
 
     const double myFate{DiceRoller::probabilityGen(DiceRoller::twister)};
     double cumuProb{};
 
     // sanity check: if not bonded to a neighbour, mole should be free,
     // vice versa
-    /* assert((mole->bon_nei == 0 && mole->m_typeComp == Molecule::free)
-     * || */
-    /* (mole->bon_nei != 0 && mole->m_typeComp != Molecule::free)); */
+    assert((mole->bon_nei == 0 && mole->m_typeComp == Molecule::free) ||
+           (mole->bon_nei != 0 && mole->m_typeComp != Molecule::free));
     assert((mole->nei_ptr == nullptr && mole->m_typeComp == Molecule::free) ||
            (mole->nei_ptr != nullptr && mole->m_typeComp != Molecule::free));
 
@@ -563,17 +563,18 @@ void newCA::update_squares() {
     } else {
       if ((mole->m_typeComp == Molecule::free) &&
           (mole->m_typeRep != Molecule::s) &&
-          (someNeiWM->m_typeRep != Molecule::s) &&
-          (someNeiWM->m_typeComp == Molecule::free)) {
-        assert(mole->m_myCataParam == 10 && someNeiWM->m_myCataParam == 10);
+          (someNei->m_typeRep != Molecule::s) &&
+          (someNei->m_typeComp == Molecule::free)) {
+        assert(mole->m_myCataParam == 10 && someNei->m_myCataParam == 10);
         try {
           int myComplex{
-              determineComplex(myFate, cumuProb, mole, someNeiWM, mole_type)};
+              determineComplex(myFate, cumuProb, mole, someNei, mole_type)};
           if (myComplex > 1003) // note that anything beyond 1003 means
                                 // something in determineComplex is broken
                                 // e.g. someNei is a s!
             throw -1;
-          formingComplex(myComplex, mole, someNeiWM);
+          formingComplex(myComplex, mole, neiNum, someNei);
+          /* formingComplex(myComplex, mole, someNeiWM); */
           continue;
         } catch (int) {
           std::cerr << "Exception detected in determineComplex(); ";
@@ -597,15 +598,17 @@ void newCA::update_squares() {
           /* std::cout << testSimple(0) << '\n'; */
           mole->m_typeComp = Molecule::free;
           mole->m_myCataParam = 10;
+          mole->bon_nei = 0;
           mole->nei_ptr->m_typeComp = Molecule::free;
           mole->nei_ptr->m_myCataParam = 10;
+          mole->nei_ptr->bon_nei = 0;
           mole->nei_ptr->nei_ptr = nullptr;
           mole->nei_ptr = nullptr;
           /* std::cout << testSimple(0) << '\n'; */
         } else if (myFate <= (cumuProb + Para::alpha * Para::gamma) &&
-                   someNeiWM->m_typeComp == Molecule::free &&
-                   someNeiWM->m_typeRep == Molecule::s)
-          replication(mole, someNeiWM);
+                   someNei->m_typeComp == Molecule::free &&
+                   someNei->m_typeRep == Molecule::s)
+          replication(mole, someNei);
       }
     }
   }

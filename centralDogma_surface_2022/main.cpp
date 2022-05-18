@@ -67,11 +67,6 @@ void useCmd(char **myOpt,
           DiceRoller::randomRowOrCol = std::uniform_int_distribution<>{
               1, static_cast<int>(Para::sys_nrow)};
         }
-        if (Para::sys_nrow != Para::sys_ncol) {
-          std::cerr << "CA can only be square for now. Enter the same "
-                       "number for rows and columns of CA.";
-          exit(1);
-        }
         /* if (Para::mt_seed) */
         /*   DiceRoller::twister.seed(Para::mt_seed); */
         /* int seeds[8]; */
@@ -131,14 +126,23 @@ int main(int argc, char *argv[]) {
       if (cmdList[i] == '-') {
         char **cmdItr = getCmd(argv, argv + argc, cmdList.substr(i, 2));
         /* std::cout << *cmdItr; */
-        if (cmdItr && i <= 12) // so far, only the frist 5 of cmdList are bool
+        if (cmdItr &&
+            i <= 12) // 12 is theindex of -R, which is the last int parameter
           useCmd(cmdItr, 'i');
-        else if (cmdItr && i <= 24)
+        else if (cmdItr && i <= 24) // 24 is theindex of -G, which is the last
+                                    // double parameter
           useCmd(cmdItr, 'd');
       }
     }
+    if (Para::sys_nrow != Para::sys_ncol) {
+      /* std::cout << Para::sys_nrow << ' ' << Para::sys_ncol << '\n'; */
+      std::cerr << "CA can only be square for now. Enter the same "
+                   "number for rows and columns of CA.";
+      exit(1);
+    }
   }
   std::cout << "mutation probability = " << Para::mutation_probability << '\n';
+  std::cout << Para::sys_nrow << ' ' << Para::sys_ncol << '\n';
   singleRun();
   return 0;
 }
