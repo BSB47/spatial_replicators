@@ -69,59 +69,77 @@ void newCA::visualize() {
 }
 
 using newcaFcn = int (newCA::*)(int, int, int);
-void newCA::writeFile(const long t, newcaFcn fcn) {
-  if (!output) {
-    std::cerr << "Could not access output.txt\n";
+void newCA::writeDensity(const long t, newcaFcn fcn) {
+  if (!density) {
+    std::cerr << "Could not access density.txt\n";
   }
 
-  output << t * Para::alpha << ' ';
+  density << t * Para::alpha << ' ';
 
   // loop through combinations of ppp (0, 0, 0) ... qqq (1, 1, 1); for numeric
   // representation of replicator types, see molecule.h enum
   for (int type1{0}; type1 <= 1; type1++) {
     for (int type2{0}; type2 <= 1; type2++) {
       for (int i{0}; i <= 1; i++) {
-        output << static_cast<double>((this->*fcn)(type1, type2, i)) /
-                      Para::grid_size
-               << ' ';
+        density << static_cast<double>((this->*fcn)(type1, type2, i)) /
+                       Para::grid_size
+                << ' ';
       }
     }
   }
 
   for (int simpType{0}; simpType <= 2; simpType++) {
-    output << static_cast<double>(testSimple(simpType)) / Para::grid_size
-           << ' ';
+    density << static_cast<double>(testSimple(simpType)) / Para::grid_size
+            << ' ';
     if (simpType == 2)
-      output << '\n';
+      density << '\n';
   }
 
-  if (t % 100 == 0) {
-    output.flush();
-    std::cout << "flushed \n";
-  }
+  density.flush();
+  std::cout << "flushed \n";
 }
 
-void newCA::testDummy(int x) {
-  for (int i{0}; i <= 9; i++) {
-    int counts{};
-    for (unsigned row{1}; row <= nrow; row++) {
-      for (unsigned col{1}; col <= ncol; col++) {
-        if (plane.cell(row, col)->dummy >= (i / 10.0) &&
-            plane.cell(row, col)->dummy < ((i / 10.0) + 0.1))
-          counts++;
+void newCA::writeField(const long t) {
+  for (int x{1}; x <= nrow; x++)
+    for (int y{1}; y <= ncol; y++)
+      if (plane.cell(x, y)->m_typeRep != Molecule::s) {
+        field << x << ' ' << y << ' ' << plane.cell(x, y)->m_typeRep << ' '
+              << plane.cell(x, y)->m_typeComp << ' ';
+        if (plane.cell(x, y)->m_typeComp != Molecule::free) {
+          unsigned neiX{};
+          unsigned neiY{};
+          plane.xy_neigh_wrap(x, y, plane.cell(x, y)->bon_nei, neiX, neiY);
+          field << neiX << ' ' << neiY << ' ';
+        }
+        for (int i{0}; i < std::size(plane.cell(x, y)->m_rateList); i++)
+          field << plane.cell(x, y)->m_rateList[i] << ' ';
+        field << '\n';
       }
-    }
-    std::cout << "0." << i << "--" << (i / 10.0) + 0.1 << '|';
-    if (x == 1)
-      counts = log(counts);
-    for (int g{0}; g < counts; g++)
-      if (x == 0 && g % 10 == 0)
-        std::cout << '=';
-      else if (x == 1)
-        std::cout << '=';
-    std::cout << '\n';
-  }
+  field.flush();
+  std::cout << "saved \n";
 }
+
+/* void newCA::testDummy(int x) { */
+/*   for (int i{0}; i <= 9; i++) { */
+/*     int counts{}; */
+/*     for (unsigned row{1}; row <= nrow; row++) { */
+/*       for (unsigned col{1}; col <= ncol; col++) { */
+/*         if (plane.cell(row, col)->dummy >= (i / 10.0) && */
+/*             plane.cell(row, col)->dummy < ((i / 10.0) + 0.1)) */
+/*           counts++; */
+/*       } */
+/*     } */
+/*     std::cout << "0." << i << "--" << (i / 10.0) + 0.1 << '|'; */
+/*     if (x == 1) */
+/*       counts = log(counts); */
+/*     for (int g{0}; g < counts; g++) */
+/*       if (x == 0 && g % 10 == 0) */
+/*         std::cout << '='; */
+/*       else if (x == 1) */
+/*         std::cout << '='; */
+/*     std::cout << '\n'; */
+/*   } */
+/* } */
 
 int newCA::testSimple(char type) {
   std::uint32_t simpleDensity{};
@@ -471,35 +489,38 @@ void newCA::replication(Molecule *mole, Molecule *someNei) {
   exponentialMutation(someNei);
 }
 
-void newCA::linearMutation(Molecule *someNei) {
-  if (DiceRoller::probabilityGen(DiceRoller::twister) <=
-      Para::mutation_probability) {
-    /* for (int i{0}; i < std::size(someNei->m_rateList); i++) { */
-    /*   mole->m_rateList[i] += DiceRoller::mutationGen(DiceRoller::twister); */
-    /*   if (mole->m_rateList[i] > 1) */
-    /*     mole->m_rateList[i] = 2 - mole->m_rateList[i]; */
-    /*   else if (mole->m_rateList[i] < 0) */
-    /*     mole->m_rateList[i] = 0; */
-    /*   std::cout << mole->m_rateList[i] << '\n'; */
-    /*   assert(mole->m_rateList[i] <= 1); */
-    /* } */
-    someNei->dummy += DiceRoller::mutaGen(DiceRoller::twister);
-    if (someNei->dummy > 1)
-      someNei->dummy = 2 - someNei->dummy;
-    else if (someNei->dummy < 0)
-      someNei->dummy = 0;
-    /* std::cout << someNei->dummy << '\n'; */
-    assert(someNei->dummy <= 1 && someNei->dummy >= 0);
-  }
-}
+/* void newCA::linearMutation(Molecule *someNei) { */
+/*   if (DiceRoller::probabilityGen(DiceRoller::twister) <= */
+/*       Para::mutation_probability) { */
+/*     /1* for (int i{0}; i < std::size(someNei->m_rateList); i++) { *1/ */
+/*     /1*   mole->m_rateList[i] +=
+ * DiceRoller::mutationGen(DiceRoller::twister); *1/ */
+/*     /1*   if (mole->m_rateList[i] > 1) *1/ */
+/*     /1*     mole->m_rateList[i] = 2 - mole->m_rateList[i]; *1/ */
+/*     /1*   else if (mole->m_rateList[i] < 0) *1/ */
+/*     /1*     mole->m_rateList[i] = 0; *1/ */
+/*     /1*   std::cout << mole->m_rateList[i] << '\n'; *1/ */
+/*     /1*   assert(mole->m_rateList[i] <= 1); *1/ */
+/*     /1* } *1/ */
+/*     someNei->dummy += DiceRoller::mutaGen(DiceRoller::twister); */
+/*     if (someNei->dummy > 1) */
+/*       someNei->dummy = 2 - someNei->dummy; */
+/*     else if (someNei->dummy < 0) */
+/*       someNei->dummy = 0; */
+/*     /1* std::cout << someNei->dummy << '\n'; *1/ */
+/*     assert(someNei->dummy <= 1 && someNei->dummy >= 0); */
+/*   } */
+/* } */
 
 void newCA::exponentialMutation(Molecule *someNei) {
   if (DiceRoller::probabilityGen(DiceRoller::twister) <=
       Para::mutation_probability) {
-    someNei->dummy *= exp(DiceRoller::mutaGen(DiceRoller::twister));
-    if (someNei->dummy > 1)
-      someNei->dummy = 2 - someNei->dummy;
-    assert(someNei->dummy <= 1 && someNei->dummy >= 0);
+    for (int i{0}; i < std::size(someNei->m_rateList); i++) {
+      someNei->m_rateList[i] *= exp(DiceRoller::mutaGen(DiceRoller::twister));
+      if (someNei->m_rateList[i] > 1)
+        someNei->m_rateList[i] = 2 - someNei->m_rateList[i];
+      assert(someNei->m_rateList[i] <= 1 && someNei->m_rateList[i] >= 0);
+    }
   }
 }
 
@@ -525,13 +546,13 @@ void newCA::update_squares() {
     Molecule *mole{plane.cell(row, col).get()};
     auto mole_type{mole->m_typeRep};
 
-    unsigned neiNum{
-        mole->bon_nei
-            ? plane.neigh_7_select(
-                  DiceRoller::randomNeiExcl(DiceRoller::twister),
-                  mole->bon_nei) // exclude nei if mole is already in a complex
-            : static_cast<unsigned int>(
-                  DiceRoller::randomNei(DiceRoller::twister))};
+    unsigned neiNum{mole->bon_nei
+                        ? plane.neigh_7_select(
+                              DiceRoller::randomNeiExcl(DiceRoller::twister),
+                              mole->bon_nei) // exclude nei if mole is already
+                                             // in a complex
+                        : static_cast<unsigned int>(
+                              DiceRoller::randomNei(DiceRoller::twister))};
     Molecule *someNei{plane.neigh_wrap(row, col, neiNum).get()};
     /* Molecule *someNeiWM{ */
     /*     plane */

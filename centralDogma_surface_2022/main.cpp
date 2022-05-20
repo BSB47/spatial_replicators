@@ -103,14 +103,18 @@ void singleRun() {
   /* randomizedGrid.testDummy(1); */
 
   for (long t{init_time}; t <= Para::max_time; t++) {
-    if (t % Para::display_interval == 0) {
-      if (Para::visualization == 1)
+    if (Para::visualization == 1) {
+      if (t % Para::display_interval == 0)
         randomizedGrid.visualize();
-      randomizedGrid.writeFile(t, &newCA::testComplex);
-      randomizedGrid.update_squares();
     }
+
+    if (t % 50 == 0)
+      randomizedGrid.writeDensity(t, &newCA::testComplex);
+    if (t % 100 == 0)
+      randomizedGrid.writeField(t);
+    randomizedGrid.update_squares();
   }
-  randomizedGrid.testDummy(1);
+  /* randomizedGrid.testDummy(1); */
 }
 
 int main(int argc, char *argv[]) {

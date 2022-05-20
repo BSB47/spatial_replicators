@@ -22,7 +22,8 @@ private:
       nullptr}; // need to disable copy and assignment for this class!!!
                 // Otherwise will violate rule of three
 
-  std::ofstream output{"output/output.txt"};
+  std::ofstream density{"output/density.txt"};
+  std::ofstream field{"output/field.txt"};
 
   enum cashColors {
     blue,  // p
@@ -39,16 +40,17 @@ public:
   /* display and outupt */
   newCA(const unsigned a_nrow, const unsigned a_ncol);
   void visualize(); // initializing and opening window/png
-  void writeFile(const long t,
-                 int (newCA::*fcn)(int, int,
-                                   int)); // writing density of a certain
-                                          // replicator/complex to a file
+  void writeDensity(const long t,
+                    int (newCA::*fcn)(int, int,
+                                      int)); // writes density of all possible
+                                             // replicators/complexes to a file
 
-  int testSimple(char type);  // counts number of simple p's and q's
+  void writeField(const long t); //
+  int testSimple(char type);     // counts number of simple p's and q's
   int testDensity(char type); // counts number of p's and q's indiscriminately
   int testComplex(int type1, int type2,
                   int cType); // counts number of a certain complex
-  void testDummy(int x = 0);
+  /* void testDummy(int x = 0); */
   void plane_to_display(); // letting display_p put pixels into plane
   void reallycba();
 

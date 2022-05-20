@@ -39,7 +39,7 @@ private:
   // catalyst in a complex; initializes or decays/dissociates to a
   // nonsense value
 
-  double dummy{0.5};
+  /* double dummy{0.5}; */
 
   TypeReplicator m_typeRep{};
   TypeComplex m_typeComp{free};
