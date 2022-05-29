@@ -110,7 +110,7 @@ void singleRun() {
 
     if (t % 50 == 0)
       randomizedGrid.writeDensity(t, &newCA::testComplex);
-    if (t % 100 == 0)
+    if (t % 10000 == 0)
       randomizedGrid.writeField(t);
     randomizedGrid.update_squares();
   }

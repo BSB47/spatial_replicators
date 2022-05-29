@@ -103,8 +103,8 @@ void newCA::writeField(const long t) {
   for (int x{1}; x <= nrow; x++)
     for (int y{1}; y <= ncol; y++)
       if (plane.cell(x, y)->m_typeRep != Molecule::s) {
-        field << x << ' ' << y << ' ' << plane.cell(x, y)->m_typeRep << ' '
-              << plane.cell(x, y)->m_typeComp << ' ';
+        field << t << ' ' << x << ' ' << y << ' ' << plane.cell(x, y)->m_typeRep
+              << ' ' << plane.cell(x, y)->m_typeComp << ' ';
         if (plane.cell(x, y)->m_typeComp != Molecule::free) {
           unsigned neiX{};
           unsigned neiY{};
