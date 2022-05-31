@@ -108,9 +108,12 @@ void singleRun() {
         randomizedGrid.visualize();
     }
 
-    if (t % 10000 == 0) {
+    std::cout << t << '\n';
+    if (t % 7500 == 0) {
       randomizedGrid.writeDensity(t, &newCA::testComplex);
       randomizedGrid.writeField(t);
+      for (int i{0}; i <= 7; i++)
+        randomizedGrid.writeAverageK(i, t);
     }
 
     randomizedGrid.update_squares();

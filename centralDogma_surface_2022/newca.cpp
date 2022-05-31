@@ -96,15 +96,16 @@ void newCA::writeDensity(const long t, newcaFcn fcn) {
   }
 
   density.flush();
-  std::cout << "flushed \n";
+  /* std::cout << "flushed \n"; */
 }
 
 void newCA::writeField(const long t) {
   for (int x{1}; x <= nrow; x++)
     for (int y{1}; y <= ncol; y++)
       if (plane.cell(x, y)->m_typeRep != Molecule::s) {
-        field << t << ' ' << x << ' ' << y << ' ' << plane.cell(x, y)->m_typeRep
-              << ' ' << plane.cell(x, y)->m_typeComp << ' ';
+        field << t * Para::alpha << ' ' << x << ' ' << y << ' '
+              << plane.cell(x, y)->m_typeRep << ' '
+              << plane.cell(x, y)->m_typeComp << ' ';
         if (plane.cell(x, y)->m_typeComp != Molecule::free) {
           unsigned neiX{};
           unsigned neiY{};
@@ -116,7 +117,7 @@ void newCA::writeField(const long t) {
         field << '\n';
       }
   field.flush();
-  std::cout << "saved \n";
+  /* std::cout << "saved \n"; */
 }
 
 /* void newCA::testDummy(int x) { */
@@ -184,6 +185,28 @@ int newCA::testComplex(int type1, int type2, int cType) {
     }
   }
   return numb;
+}
+
+void newCA::writeAverageK(const int k, const long t) {
+  if (k == 0)
+    kParam << t * Para::alpha << ' ';
+
+  long repCount{};
+  double averageK{};
+  for (unsigned row{1}; row <= nrow; row++) {
+    for (unsigned col{1}; col <= ncol; col++) {
+      if (plane.cell(row, col)->m_typeRep != Molecule::s) {
+        repCount += 1;
+        averageK += plane.cell(row, col)->m_rateList[k];
+      }
+    }
+  }
+
+  kParam << (averageK / repCount) << ' ';
+  if (k == 7)
+    kParam << '\n';
+
+  kParam.flush();
 }
 
 void newCA::plane_to_display() { // Does not paint display! Just
