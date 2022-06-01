@@ -109,9 +109,13 @@ void singleRun() {
     }
 
     std::cout << t << '\n';
-    if (t % 7500 == 0) {
-      randomizedGrid.writeDensity(t, &newCA::testComplex);
+
+    if (t % 10000 == 0) {
       randomizedGrid.writeField(t);
+    }
+
+    if (t % 1000 == 0) {
+      randomizedGrid.writeDensity(t, &newCA::testComplex);
       for (int i{0}; i <= 7; i++)
         randomizedGrid.writeAverageK(i, t);
     }

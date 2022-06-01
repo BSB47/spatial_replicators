@@ -113,7 +113,7 @@ void newCA::writeField(const long t) {
           field << neiX << ' ' << neiY << ' ';
         }
         for (int i{0}; i < std::size(plane.cell(x, y)->m_rateList); i++)
-          field << plane.cell(x, y)->m_rateList[i] << ' ';
+          field << plane.cell(x, y)->m_rateList[i] / Para::beta << ' ';
         field << '\n';
       }
   field.flush();
@@ -202,7 +202,7 @@ void newCA::writeAverageK(const int k, const long t) {
     }
   }
 
-  kParam << (averageK / repCount) << ' ';
+  kParam << (averageK / repCount) / Para::beta << ' ';
   if (k == 7)
     kParam << '\n';
 
@@ -555,7 +555,9 @@ void newCA::update_squares() {
   for (int i{1}; i <= Para::grid_size; i++) {
     row = DiceRoller::randomRowOrCol(DiceRoller::twister);
     col = DiceRoller::randomRowOrCol(DiceRoller::twister);
-    diffuse(row, col);
+    if (DiceRoller::probabilityGen(DiceRoller::twister) <=
+        Para::alpha * Para::diffusion_probability)
+      diffuse(row, col);
   }
 
   // COMPLEX FORMATION & REPLICATION

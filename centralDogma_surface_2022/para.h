@@ -6,7 +6,7 @@ namespace Para {
 inline unsigned sys_nrow{512};
 inline unsigned sys_ncol{512};
 inline unsigned grid_size{sys_nrow * sys_ncol};
-inline unsigned scale{10}; // 10x pixel scale
+inline unsigned scale{1}; // 10x pixel scale
 inline double decay_probability{0.02};
 inline double diffusion_probability{0.1};
 inline double mutation_probability{0.5};
