@@ -1,6 +1,7 @@
 #ifndef PARA_H
 #define PARA_H
 
+#include <limits>
 namespace Para {
 //-----MODEL PARAMETERS
 inline unsigned sys_nrow{512};
@@ -19,7 +20,7 @@ inline unsigned visualization{0};
 inline unsigned mt_seed{0};
 inline unsigned movie{0};
 inline unsigned display_interval{1};
-inline unsigned max_time{1000000};
+inline unsigned max_time{std::numeric_limits<unsigned int>::max()};
 } // namespace Para
 
 #endif
