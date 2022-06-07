@@ -11,7 +11,7 @@ inline unsigned scale{1}; // 10x pixel scale
 inline double decay_probability{0.02};
 inline double diffusion_probability{0.1};
 inline double mutation_probability{0.5};
-inline double alpha{0.9999 / 1.62};
+inline double alpha{0.9999 / 2.02};
 inline double beta{0.5};
 inline double gamma{0.5};
 

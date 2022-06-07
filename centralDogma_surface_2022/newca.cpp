@@ -508,32 +508,24 @@ void newCA::replication(Molecule *mole, Molecule *someNei) {
   mole->nei_ptr = nullptr;
   assert(!(mole->nei_ptr) && someNei->m_typeComp == Molecule::free);
 
-  /* linearMutation(someNei); */
-  exponentialMutation(someNei);
+  linearMutation(someNei);
+  /* exponentialMutation(someNei); */
 }
 
-/* void newCA::linearMutation(Molecule *someNei) { */
-/*   if (DiceRoller::probabilityGen(DiceRoller::twister) <= */
-/*       Para::mutation_probability) { */
-/*     /1* for (int i{0}; i < std::size(someNei->m_rateList); i++) { *1/ */
-/*     /1*   mole->m_rateList[i] +=
- * DiceRoller::mutationGen(DiceRoller::twister); *1/ */
-/*     /1*   if (mole->m_rateList[i] > 1) *1/ */
-/*     /1*     mole->m_rateList[i] = 2 - mole->m_rateList[i]; *1/ */
-/*     /1*   else if (mole->m_rateList[i] < 0) *1/ */
-/*     /1*     mole->m_rateList[i] = 0; *1/ */
-/*     /1*   std::cout << mole->m_rateList[i] << '\n'; *1/ */
-/*     /1*   assert(mole->m_rateList[i] <= 1); *1/ */
-/*     /1* } *1/ */
-/*     someNei->dummy += DiceRoller::mutaGen(DiceRoller::twister); */
-/*     if (someNei->dummy > 1) */
-/*       someNei->dummy = 2 - someNei->dummy; */
-/*     else if (someNei->dummy < 0) */
-/*       someNei->dummy = 0; */
-/*     /1* std::cout << someNei->dummy << '\n'; *1/ */
-/*     assert(someNei->dummy <= 1 && someNei->dummy >= 0); */
-/*   } */
-/* } */
+void newCA::linearMutation(Molecule *someNei) {
+  if (DiceRoller::probabilityGen(DiceRoller::twister) <=
+      Para::mutation_probability) {
+    for (int i{0}; i < std::size(someNei->m_rateList); i++) {
+      someNei->m_rateList[i] += DiceRoller::mutaGen(DiceRoller::twister);
+      if (someNei->m_rateList[i] > 1)
+        someNei->m_rateList[i] = 2 - someNei->m_rateList[i];
+      else if (someNei->m_rateList[i] < 0)
+        someNei->m_rateList[i] = 0;
+      /* std::cout << someNei->m_rateList[i] << '\n'; */
+      assert(someNei->m_rateList[i] <= 1 && someNei->m_rateList[i] >= 0);
+    }
+  }
+}
 
 void newCA::exponentialMutation(Molecule *someNei) {
   if (DiceRoller::probabilityGen(DiceRoller::twister) <=
