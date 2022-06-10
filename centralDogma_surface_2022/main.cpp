@@ -45,7 +45,7 @@ void useCmd(char **myOpt,
       {"-M", &Para::mutation_probability},
       {"-A", &Para::alpha},
       {"-B", &Para::beta},
-      {"-G", &Para::gamma}};
+      {"-G", &Para::mutation_interval}};
 
   using namespace std::literals;
   if (optType == 'i') {
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
         char **cmdItr = getCmd(argv, argv + argc, cmdList.substr(i, 2));
         /* std::cout << *cmdItr; */
         if (cmdItr &&
-            i <= 12) // 12 is theindex of -R, which is the last int parameter
+            i <= 12) // 12 is the index of -R, which is the last int parameter
           useCmd(cmdItr, 'i');
         else if (cmdItr && i <= 24) // 24 is theindex of -G, which is the last
                                     // double parameter

@@ -14,6 +14,7 @@ inline double mutation_probability{0.5};
 inline double alpha{0.9999 / 2.02};
 inline double beta{0.5};
 inline double gamma{0.5};
+inline double mutation_interval{0.05};
 
 //------MISC
 inline unsigned visualization{0};
