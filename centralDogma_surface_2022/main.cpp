@@ -154,6 +154,7 @@ int main(int argc, char *argv[]) {
     }
   }
   std::cout << "mutation probability = " << Para::mutation_probability << '\n';
+  std::cout << "mutation interval = " << Para::mutation_interval << '\n';
   std::cout << Para::sys_nrow << ' ' << Para::sys_ncol << '\n';
   singleRun();
   return 0;

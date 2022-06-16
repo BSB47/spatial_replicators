@@ -113,7 +113,7 @@ void newCA::writeField(const long t) {
           field << neiX << ' ' << neiY << ' ';
         }
         for (int i{0}; i < std::size(plane.cell(x, y)->m_rateList); i++)
-          field << plane.cell(x, y)->m_rateList[i] / Para::beta << ' ';
+          field << plane.cell(x, y)->m_rateList[i] << ' ';
         field << '\n';
       }
   field.flush();
@@ -202,7 +202,7 @@ void newCA::writeAverageK(const int k, const long t) {
     }
   }
 
-  kParam << (averageK / repCount) / Para::beta << ' ';
+  kParam << (averageK / repCount) << ' ';
   if (k == 7)
     kParam << '\n';
 
@@ -316,12 +316,12 @@ int newCA::determineComplex(const double myFate, double &cumuProb,
     switch (nei_type) {
     case 0: // if mole & someNei are both P
       for (unsigned i{0}; i <= 1; i++) {
-        cumuProb += Para::alpha * mole->m_rateList[i];
+        cumuProb += Para::alpha * Para::beta * mole->m_rateList[i];
         if (myFate <= cumuProb)
           return i;
       }
       for (unsigned i{0}; i <= 1; i++) {
-        cumuProb += Para::alpha * someNei->m_rateList[i];
+        cumuProb += Para::alpha * Para::beta * someNei->m_rateList[i];
         if (myFate <= cumuProb)
           return (i + 100);
       }
@@ -329,12 +329,12 @@ int newCA::determineComplex(const double myFate, double &cumuProb,
       return 1000; // complex did not form between two P molecules
     case 1:        // if mole is P and someNei is Q
       for (unsigned i{2}; i <= 3; i++) {
-        cumuProb += Para::alpha * mole->m_rateList[i];
+        cumuProb += Para::alpha * Para::beta * mole->m_rateList[i];
         if (myFate <= cumuProb)
           return i;
       }
       for (unsigned i{4}; i <= 5; i++) {
-        cumuProb += Para::alpha * someNei->m_rateList[i];
+        cumuProb += Para::alpha * Para::beta * someNei->m_rateList[i];
         if (myFate <= cumuProb)
           return (i + 100);
       }
@@ -349,12 +349,12 @@ int newCA::determineComplex(const double myFate, double &cumuProb,
                                             /* P *1/ */
     case 0:
       for (unsigned i{4}; i <= 5; i++) {
-        cumuProb += Para::alpha * mole->m_rateList[i];
+        cumuProb += Para::alpha * Para::beta * mole->m_rateList[i];
         if (myFate <= cumuProb)
           return i;
       }
       for (unsigned i{2}; i <= 3; i++) {
-        cumuProb += Para::alpha * someNei->m_rateList[i];
+        cumuProb += Para::alpha * Para::beta * someNei->m_rateList[i];
         if (myFate <= cumuProb)
           return (i + 100);
       }
@@ -362,12 +362,12 @@ int newCA::determineComplex(const double myFate, double &cumuProb,
       return 1002; // complex did not form between Q and P
     case 1:        // if both are Q
       for (unsigned i{6}; i <= 7; i++) {
-        cumuProb += Para::alpha * mole->m_rateList[i];
+        cumuProb += Para::alpha * Para::beta * mole->m_rateList[i];
         if (myFate <= cumuProb)
           return i;
       }
       for (unsigned i{6}; i <= 7; i++) {
-        cumuProb += Para::alpha * someNei->m_rateList[i];
+        cumuProb += Para::alpha * Para::beta * someNei->m_rateList[i];
         if (myFate <= cumuProb)
           return (i + 100);
       }
@@ -515,13 +515,13 @@ void newCA::replication(Molecule *mole, Molecule *someNei) {
 void newCA::linearMutation(Molecule *someNei) {
   if (DiceRoller::probabilityGen(DiceRoller::twister) <=
       Para::mutation_probability) {
+    /* std::cout << "mutating\n"; */
     for (int i{0}; i < std::size(someNei->m_rateList); i++) {
       someNei->m_rateList[i] += DiceRoller::mutaGen(DiceRoller::twister);
       if (someNei->m_rateList[i] > 1)
         someNei->m_rateList[i] = 2 - someNei->m_rateList[i];
       else if (someNei->m_rateList[i] < 0)
         someNei->m_rateList[i] = 0;
-      /* std::cout << someNei->m_rateList[i] << '\n'; */
       assert(someNei->m_rateList[i] <= 1 && someNei->m_rateList[i] >= 0);
     }
   }
@@ -625,9 +625,9 @@ void newCA::update_squares() {
         assert(mole->m_myCataParam <= 7 != mole->nei_ptr->m_myCataParam <= 7);
         double dissProb{
             mole->m_typeComp == Molecule::cata
-                ? (1 - mole->m_rateList[mole->m_myCataParam] / Para::beta)
-                : (1 - mole->nei_ptr->m_rateList[mole->nei_ptr->m_myCataParam] /
-                           Para::beta)};
+                ? (1 - mole->m_rateList[mole->m_myCataParam])
+                : (1 -
+                   mole->nei_ptr->m_rateList[mole->nei_ptr->m_myCataParam])};
         assert(dissProb = 0.2);
         cumuProb += Para::alpha * Para::beta * dissProb;
         if (myFate <= cumuProb)
