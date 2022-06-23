@@ -128,34 +128,54 @@ void singleRun() {
 int main(int argc, char *argv[]) {
 
   if (argc <= 2) {
-    std::cout << "Enter valid arguments to proceed \n";
+    std::cout << "Enter valid arguments to proceed; for help, use \"-h 1\"\n";
     return 1;
   }
 
   if (argc > 2) {
-    std::string_view cmdList{"-v-m-s-d-t-C-R-D-I-M-A-B-G"};
+    std::string_view cmdList{"-h-v-m-s-d-t-C-R-D-I-M-A-B-G"};
     for (int i{0}; i < cmdList.length(); i++) {
       if (cmdList[i] == '-') {
         char **cmdItr = getCmd(argv, argv + argc, cmdList.substr(i, 2));
         /* std::cout << *cmdItr; */
-        if (cmdItr &&
-            i <= 12) // 12 is the index of -R, which is the last int parameter
+        if (cmdItr && i == 0) {
+          std::cout << "CLI options are as follows:"
+                    << "\n-h show this messege"
+                    << "\n-C ncol (CA)"
+                    << "\n-R nrow (CA)"
+                    << "\n-v visualization (png)"
+                    << "\n-d display_interval"
+                    << "\n-s seed"
+                    << "\n-t max_time"
+                    << "\n-m movie (view in real time)"
+                    << "\n-D decay_probability"
+                    << "\n-I diffusion_probability"
+                    << "\n-M mutation_probability"
+                    << "\n-A alpha"
+                    << "\n-B beta"
+                    << "\n-G mutation_interval";
+          exit(0);
+        } else if (cmdItr && i <= 14) // 12 is the index of -R, which is the
+                                      // last int parameter
           useCmd(cmdItr, 'i');
-        else if (cmdItr && i <= 24) // 24 is theindex of -G, which is the last
+        else if (cmdItr && i <= 26) // 24 is theindex of -G, which is the last
                                     // double parameter
           useCmd(cmdItr, 'd');
       }
     }
+
     if (Para::sys_nrow != Para::sys_ncol) {
       /* std::cout << Para::sys_nrow << ' ' << Para::sys_ncol << '\n'; */
       std::cerr << "CA can only be square for now. Enter the same "
                    "number for rows and columns of CA.";
       exit(1);
     }
+
+    std::cout << "mutation probability = " << Para::mutation_probability
+              << '\n';
+    std::cout << "mutation interval = " << Para::mutation_interval << '\n';
+    std::cout << Para::sys_nrow << ' ' << Para::sys_ncol << '\n';
+    singleRun();
+    return 0;
   }
-  std::cout << "mutation probability = " << Para::mutation_probability << '\n';
-  std::cout << "mutation interval = " << Para::mutation_interval << '\n';
-  std::cout << Para::sys_nrow << ' ' << Para::sys_ncol << '\n';
-  singleRun();
-  return 0;
 }

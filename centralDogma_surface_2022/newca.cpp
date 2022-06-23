@@ -56,14 +56,16 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
     display_p->color_rgb(blue, 0, 0, 255);
     display_p->color_rgb(red, 255, 0, 0);
     display_p->color_rgb(white, 255, 255, 255);
-    display_p->open_window();
+    if (Para::movie == 1)
+      display_p->open_window();
     display_p->open_png();
   }
 }
 
 void newCA::visualize() {
   plane_to_display();
-  display_p->draw_window();
+  if (Para::movie == 1)
+    display_p->draw_window();
   display_p->draw_png();
   return;
 }
