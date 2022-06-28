@@ -112,6 +112,7 @@ void singleRun() {
 
     if (t % 10000 == 0) {
       randomizedGrid.writeField(t);
+      randomizedGrid.writeDistribution(t);
     }
 
     if (t % 1000 == 0) {

@@ -25,6 +25,7 @@ private:
   std::ofstream density{"output/density.txt"};
   std::ofstream field{"output/field.txt"};
   std::ofstream kParam{"output/catalytic_param.txt"};
+  std::ofstream kDistr{"output/distribution.txt"};
 
   enum cashColors {
     blue,  // p
@@ -53,6 +54,8 @@ public:
                   int cType); // counts number of a certain complex
   /* void testDummy(int x = 0); */
   void writeAverageK(const int k, const long t);
+  void writeDistribution(
+      const long t); // writes frequency distribution of all 8 k parameters
   void plane_to_display(); // letting display_p put pixels into plane
   void reallycba();
 

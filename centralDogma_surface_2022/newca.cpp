@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <memory>
 #include <random>
 #include <string_view>
@@ -209,6 +210,22 @@ void newCA::writeAverageK(const int k, const long t) {
     kParam << '\n';
 
   kParam.flush();
+}
+
+void newCA::writeDistribution(const long t) {
+
+  for (int k{0}; k < 8; k++) {
+    std::map<int, int> histogram;
+    for (unsigned row{1}; row <= nrow; row++)
+      for (unsigned col{1}; col <= ncol; col++)
+        if (plane.cell(row, col)->m_typeRep != Molecule::s) {
+          ++histogram[static_cast<int>(plane.cell(row, col)->m_rateList[k] *
+                                       1e04)];
+        }
+    kDistr << "Time " << t * Para::alpha << " k " << k << '\n';
+    for (const auto &d : histogram)
+      kDistr << d.first * 1e-4 << ' ' << d.second << '\n';
+  }
 }
 
 void newCA::plane_to_display() { // Does not paint display! Just
