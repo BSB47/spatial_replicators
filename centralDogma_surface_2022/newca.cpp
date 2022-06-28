@@ -214,6 +214,8 @@ void newCA::writeAverageK(const int k, const long t) {
 
 void newCA::writeDistribution(const long t) {
 
+  std::vector names{"kppp", "kppq", "kpqq", "kpqp",
+                    "kqpp", "kqpq", "kqqq", "kqqp"};
   for (int k{0}; k < 8; k++) {
     std::map<int, int> histogram;
     for (unsigned row{1}; row <= nrow; row++)
@@ -222,9 +224,10 @@ void newCA::writeDistribution(const long t) {
           ++histogram[static_cast<int>(plane.cell(row, col)->m_rateList[k] *
                                        1e04)];
         }
-    kDistr << "Time " << t * Para::alpha << " k " << k << '\n';
+    kDistr << "Time " << t * Para::alpha << " Parameter " << names[k] << '\n';
     for (const auto &d : histogram)
       kDistr << d.first * 1e-4 << ' ' << d.second << '\n';
+    kDistr.flush();
   }
 }
 
