@@ -530,8 +530,8 @@ void newCA::replication(Molecule *mole, Molecule *someNei) {
   mole->nei_ptr = nullptr;
   assert(!(mole->nei_ptr) && someNei->m_typeComp == Molecule::free);
 
-  linearMutation(someNei);
-  /* exponentialMutation(someNei); */
+  /* linearMutation(someNei); */
+  exponentialMutation(someNei);
 }
 
 void newCA::linearMutation(Molecule *someNei) {
