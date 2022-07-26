@@ -205,7 +205,11 @@ void newCA::writeAverageK(const int k, const long t) {
     }
   }
 
-  kParam << (averageK / repCount) << ' ';
+  if (repCount == 0)
+    kParam << "0 ";
+  else
+    kParam << (averageK / repCount) << ' ';
+
   if (k == 7)
     kParam << '\n';
 
