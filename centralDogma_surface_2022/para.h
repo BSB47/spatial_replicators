@@ -8,6 +8,7 @@ inline unsigned sys_nrow{512};
 inline unsigned sys_ncol{512};
 inline unsigned grid_size{sys_nrow * sys_ncol};
 inline unsigned scale{1}; // 10x pixel scale
+inline unsigned read{0};
 inline double decay_probability{0.02};
 inline double diffusion_probability{0.1};
 inline double mutation_probability{0.5};

@@ -108,15 +108,15 @@ void singleRun() {
         randomizedGrid.visualize();
     }
 
-    std::cout << t << '\n';
+    /* std::cout << t << '\n'; */
 
     if (t % 10000 == 0) {
       randomizedGrid.writeField(t);
-      randomizedGrid.writeDistribution(t);
     }
 
     if (t % 1000 == 0) {
       randomizedGrid.writeDensity(t, &newCA::testComplex);
+      randomizedGrid.writeDistribution(t);
       for (int i{0}; i <= 7; i++)
         randomizedGrid.writeAverageK(i, t);
     }
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
     std::cout << "mutation probability = " << Para::mutation_probability
               << '\n';
     std::cout << "mutation interval = " << Para::mutation_interval << '\n';
-    std::cout << Para::sys_nrow << ' ' << Para::sys_ncol << '\n';
+    std::cout << Para::sys_nrow << 'x' << Para::sys_ncol << '\n';
     singleRun();
     return 0;
   }

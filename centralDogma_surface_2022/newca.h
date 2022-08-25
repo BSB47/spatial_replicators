@@ -48,7 +48,12 @@ public:
                                              // replicators/complexes to a file
 
   void writeField(const long t); //
-  int testSimple(char type);     // counts number of simple p's and q's
+  void readField(
+      std::string_view t, unsigned lowerB,
+      unsigned upperB); // reads field into CA2D object, pass a lower and upper
+                        // bound to only read part of a field (the partial
+                        // field is bound by two empty columns either side)
+  int testSimple(char type);  // counts number of simple p's and q's
   int testDensity(char type); // counts number of p's and q's indiscriminately
   int testComplex(int type1, int type2,
                   int cType); // counts number of a certain complex

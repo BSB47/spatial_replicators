@@ -41,7 +41,7 @@ private:
 
   /* double dummy{0.5}; */
 
-  TypeReplicator m_typeRep{};
+  TypeReplicator m_typeRep{s};
   TypeComplex m_typeComp{free};
 
   unsigned bon_nei{0};

@@ -5,6 +5,7 @@
 #include "para.h"
 #include "random.h"
 
+#include <algorithm>
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -12,6 +13,8 @@
 #include <map>
 #include <memory>
 #include <random>
+#include <sstream>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -29,18 +32,24 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
       /* plane.cell(row, col) = */
       /*     std::make_unique<Molecule>(Molecule::p, Molecule::free); */
       plane.cell(row, col) = std::make_unique<Molecule>();
-      switch (DiceRoller::typeInitializer(DiceRoller::twister)) {
-      case 1:
-        plane.cell(row, col)->m_typeRep = Molecule::p;
-        break;
-      case 2:
-        plane.cell(row, col)->m_typeRep = Molecule::q;
-        break;
-      case 3:
-        plane.cell(row, col)->m_typeRep = Molecule::s;
-        break;
+      if (Para::read == false) {
+        switch (DiceRoller::typeInitializer(DiceRoller::twister)) {
+        case 1:
+          plane.cell(row, col)->m_typeRep = Molecule::p;
+          break;
+        case 2:
+          plane.cell(row, col)->m_typeRep = Molecule::q;
+          break;
+        case 3:
+          plane.cell(row, col)->m_typeRep = Molecule::s;
+          break;
+        }
       }
     }
+  }
+
+  if (Para::read == true) {
+    readField("504900", 1, 512);
   }
 
   if (Para::visualization == 1) {
@@ -113,7 +122,8 @@ void newCA::writeField(const long t) {
           unsigned neiX{};
           unsigned neiY{};
           plane.xy_neigh_wrap(x, y, plane.cell(x, y)->bon_nei, neiX, neiY);
-          field << neiX << ' ' << neiY << ' ';
+          field << plane.cell(x, y)->bon_nei << ' ' << neiX << ' ' << neiY
+                << ' ';
         }
         for (int i{0}; i < std::size(plane.cell(x, y)->m_rateList); i++)
           field << plane.cell(x, y)->m_rateList[i] << ' ';
@@ -121,6 +131,176 @@ void newCA::writeField(const long t) {
       }
   field.flush();
   /* std::cout << "saved \n"; */
+}
+
+/* Because this function uses std::find, to find lines matching the exact t, one
+ * should pass a time argument that includes a decimal point. This avoids the
+ * situation of a later time point containing the string of the ealier time
+ * point you've entered.
+ */
+void newCA::readField(std::string_view t, unsigned lowerB, unsigned upperB) {
+  // this map is used for determining the m_myCataParam of the catalyst in
+  // complexes we instantiate in a saved field, as that information is not
+  // saved; for this purpose we need to know the m_typeComp of both complex
+  // molecules; the TypeComplex enum is implicitly converted to numbers and used
+  // as keys; the associated value is the index of the corresponding catalytic
+  // parameter. For details see molecule.h.
+  const std::map<std::string, unsigned> whichK{
+      {"002", 0}, {"003", 1}, {"013", 2}, {"012", 3},
+      {"102", 4}, {"103", 5}, {"113", 6}, {"112", 7}};
+  std::ifstream fin{"wat"};
+  if (!fin) {
+    std::cerr << "Cannot find field.txt\n";
+    exit(1);
+  }
+  std::string moleState{};
+  auto isSpace{[](auto ch) {
+    return (ch == ' ');
+  }}; // lambda to test if element pointed by iterator is a space char
+  std::string::iterator spaceAfterRow, spaceAfterCol, spaceAfterType,
+      spaceAfterComp, spaceAfterBon, spaceAfterNeiX, spaceAfterNeiY;
+
+  Molecule::TypeComplex compStatus;
+  Molecule::TypeReplicator myType;
+
+  while (std::getline(fin, moleState)) {
+    unsigned myRow{};
+    unsigned myCol{};
+    unsigned neiX{};
+    unsigned neiY{};
+    int counter{};
+    if (moleState.find(t) != std::string::npos) {
+      for (auto ch{moleState.begin()}; ch != moleState.end(); ++ch) {
+        if (*ch == ' ') {
+          counter++;
+          switch (counter) {
+          case 1: {
+            spaceAfterRow = std::find_if(ch + 1, moleState.end(), isspace);
+            myRow = std::stoi(std::string(
+                ch + 1, spaceAfterRow)); // std::string construction using
+                                         // iterators makes a string from
+                                         // [firstIt, lastIt);
+            assert(myRow >= 1 || myRow <= 512);
+            continue;
+          }
+          case 2: {
+            spaceAfterCol =
+                std::find_if(spaceAfterRow + 1, moleState.end(), isSpace);
+            myCol = std::stoi(std::string(spaceAfterRow + 1, spaceAfterCol));
+            assert(myCol >= 1 || myCol <= 512);
+            continue;
+          }
+          case 3: {
+            spaceAfterType =
+                std::find_if(spaceAfterCol + 1, moleState.end(), isSpace);
+            myType = static_cast<Molecule::TypeReplicator>(
+                std::stoi(std::string(spaceAfterCol + 1, spaceAfterType)));
+            assert(myType == 0 || myType == 1 || myType == 2);
+            if (myCol >= lowerB && myCol <= upperB)
+              plane.cell(myRow, myCol)->m_typeRep = myType;
+            continue;
+          }
+          case 4: {
+            spaceAfterComp =
+                std::find_if(spaceAfterType + 1, moleState.end(), isSpace);
+            compStatus = static_cast<Molecule::TypeComplex>(
+                std::stoi(std::string(spaceAfterType + 1, spaceAfterComp)));
+            assert(compStatus == 0 || compStatus == 1 || compStatus == 2 ||
+                   compStatus == 3);
+            if (myCol >= lowerB && myCol <= upperB)
+              plane.cell(myRow, myCol)->m_typeComp = compStatus;
+            continue;
+          }
+          case 5: {
+            // the string after compStatus can be either bon_nei or k0
+            // depending on compStatus; defining the following three variables
+            // outside the following if statement is because I'd like to
+            // conditionally initialize "start" (see below) and also for setting
+            // m_myCataParam of catalyst
+            spaceAfterBon =
+                std::find_if(spaceAfterComp + 1, moleState.end(), isSpace);
+            spaceAfterNeiX =
+                std::find_if(spaceAfterBon + 1, moleState.end(), isSpace);
+            spaceAfterNeiY =
+                std::find_if(spaceAfterNeiX + 1, moleState.end(), isSpace);
+
+            if (plane.cell(myRow, myCol)->m_typeComp > Molecule::free &&
+                myCol >= lowerB && myCol <= upperB) {
+              assert(plane.cell(myRow, myCol)->nei_ptr == nullptr &&
+                     plane.cell(myRow, myCol)->bon_nei == 0);
+              plane.cell(myRow, myCol)->bon_nei =
+                  std::stoi(std::string(spaceAfterComp + 1, spaceAfterBon));
+
+              // checking consistency between bon_nei and m_typeComp
+              assert(plane.cell(myRow, myCol)->bon_nei != 0);
+
+              neiX = std::stoi(std::string(spaceAfterBon + 1, spaceAfterNeiX));
+              neiY = std::stoi(std::string(spaceAfterNeiX + 1, spaceAfterNeiY));
+
+              plane.cell(myRow, myCol)->nei_ptr = plane.cell(neiX, neiY).get();
+            }
+            // assign catalytic parameters;
+            if (myCol >= lowerB && myCol <= upperB) {
+              auto &start(plane.cell(myRow, myCol)->m_typeComp == 0
+                              ? spaceAfterComp
+                              : spaceAfterNeiY);
+
+              std::string buf;
+              std::stringstream ss{std::string(start + 1, moleState.end())};
+              std::vector<std::string> Ks;
+              while (getline(ss, buf, ' '))
+                Ks.push_back(buf);
+
+              for (int i{0}; i <= 7; i++) {
+                plane.cell(myRow, myCol)->m_rateList[i] = std::stod(Ks[i]);
+              }
+            }
+            continue;
+          }
+          }
+        }
+      }
+    }
+  }
+
+  for (int row{1}; row <= 512; row++) {
+    if (plane.cell(row, lowerB)->m_typeComp != Molecule::free) {
+      decay(plane.cell(row, lowerB)->nei_ptr);
+      decay(plane.cell(row, lowerB).get());
+    }
+    if (plane.cell(row, upperB)->m_typeComp != Molecule::free) {
+      decay(plane.cell(row, upperB)->nei_ptr);
+      decay(plane.cell(row, upperB).get());
+    }
+  }
+
+  for (int myRow{1}; myRow <= 512; myRow++)
+    for (int myCol{1}; myCol < upperB; myCol++) {
+      if (plane.cell(myRow, myCol)->m_typeComp == 1) {
+        std::string key{
+            std::to_string(plane.cell(myRow, myCol)->m_typeComp) +
+            std::to_string(plane.cell(myRow, myCol)->nei_ptr->m_typeRep) +
+            std::to_string(plane.cell(myRow, myCol)->nei_ptr->m_typeComp)};
+        plane.cell(myRow, myCol)->m_myCataParam = whichK.find(key)->second;
+      }
+    }
+
+  for (int x{1}; x <= 512; x++)
+    for (int y{1}; y <= 512; y++) {
+      if (plane.cell(x, y)->m_typeComp != Molecule::free) {
+        assert(plane.cell(x, y)->m_typeRep != Molecule::s &&
+               plane.cell(x, y)->nei_ptr->m_typeRep != Molecule::s);
+        assert(plane.cell(x, y)->nei_ptr->bon_nei ==
+               plane.neighbor_converter(plane.cell(x, y)->bon_nei));
+        assert(plane.cell(x, y)->nei_ptr->nei_ptr == plane.cell(x, y).get());
+        assert((plane.cell(x, y)->m_myCataParam != 10) !=
+               (plane.cell(x, y)->nei_ptr->m_myCataParam != 10));
+      } else {
+        assert(plane.cell(x, y)->bon_nei == 0 &&
+               plane.cell(x, y)->nei_ptr == nullptr &&
+               plane.cell(x, y)->m_myCataParam == 10);
+      }
+    }
 }
 
 /* void newCA::testDummy(int x) { */
@@ -217,7 +397,6 @@ void newCA::writeAverageK(const int k, const long t) {
 }
 
 void newCA::writeDistribution(const long t) {
-
   std::vector names{"kppp", "kppq", "kpqq", "kpqp",
                     "kqpp", "kqpq", "kqqq", "kqqp"};
   for (int k{0}; k < 8; k++) {
@@ -331,7 +510,6 @@ the template
 int newCA::determineComplex(const double myFate, double &cumuProb,
                             Molecule *mole, Molecule *someNei,
                             const int mole_type) {
-
   Molecule::TypeReplicator nei_type{someNei->m_typeRep};
   assert((someNei->m_typeComp == Molecule::free) &&
          (mole->m_typeRep == mole_type) && (mole_type != Molecule::s) &&
@@ -654,7 +832,7 @@ void newCA::update_squares() {
                 ? (1 - mole->m_rateList[mole->m_myCataParam])
                 : (1 -
                    mole->nei_ptr->m_rateList[mole->nei_ptr->m_myCataParam])};
-        assert(dissProb = 0.2);
+        /* assert(dissProb = 0.2); */
         cumuProb += Para::alpha * Para::beta * dissProb;
         if (myFate <= cumuProb)
         /* replication(mole, someNeiWM); */
