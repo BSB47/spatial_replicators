@@ -49,7 +49,23 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
   }
 
   if (Para::read == true) {
-    readField("2475", 0, 51);
+    readField("4.76875e+06", 1, 512);
+    for (int x{1}; x <= Para::sys_nrow; x++)
+      for (int y{1}; y <= Para::sys_ncol; y++) {
+        if (plane.cell(x, y)->m_typeComp != Molecule::free) {
+          assert(plane.cell(x, y)->m_typeRep != Molecule::s &&
+                 plane.cell(x, y)->nei_ptr->m_typeRep != Molecule::s);
+          assert(plane.cell(x, y)->nei_ptr->bon_nei ==
+                 plane.neighbor_converter(plane.cell(x, y)->bon_nei));
+          assert(plane.cell(x, y)->nei_ptr->nei_ptr == plane.cell(x, y).get());
+          assert((plane.cell(x, y)->m_myCataParam != 10) !=
+                 (plane.cell(x, y)->nei_ptr->m_myCataParam != 10));
+        } else {
+          assert(plane.cell(x, y)->bon_nei == 0 &&
+                 plane.cell(x, y)->nei_ptr == nullptr &&
+                 plane.cell(x, y)->m_myCataParam == 10);
+        }
+      }
   }
 
   if (Para::visualization == 1) {
@@ -285,23 +301,6 @@ void newCA::readField(std::string_view t, unsigned lowerB, unsigned upperB) {
             std::to_string(plane.cell(myRow, myCol)->nei_ptr->m_typeRep) +
             std::to_string(plane.cell(myRow, myCol)->nei_ptr->m_typeComp)};
         plane.cell(myRow, myCol)->m_myCataParam = whichK.find(key)->second;
-      }
-    }
-
-  for (int x{1}; x <= Para::sys_nrow; x++)
-    for (int y{1}; y <= Para::sys_ncol; y++) {
-      if (plane.cell(x, y)->m_typeComp != Molecule::free) {
-        assert(plane.cell(x, y)->m_typeRep != Molecule::s &&
-               plane.cell(x, y)->nei_ptr->m_typeRep != Molecule::s);
-        assert(plane.cell(x, y)->nei_ptr->bon_nei ==
-               plane.neighbor_converter(plane.cell(x, y)->bon_nei));
-        assert(plane.cell(x, y)->nei_ptr->nei_ptr == plane.cell(x, y).get());
-        assert((plane.cell(x, y)->m_myCataParam != 10) !=
-               (plane.cell(x, y)->nei_ptr->m_myCataParam != 10));
-      } else {
-        assert(plane.cell(x, y)->bon_nei == 0 &&
-               plane.cell(x, y)->nei_ptr == nullptr &&
-               plane.cell(x, y)->m_myCataParam == 10);
       }
     }
 }
