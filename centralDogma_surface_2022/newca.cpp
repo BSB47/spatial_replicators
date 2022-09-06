@@ -49,7 +49,7 @@ newCA::newCA(const unsigned a_nrow, const unsigned a_ncol)
   }
 
   if (Para::read == true) {
-    readField("504900", 1, 512);
+    readField("2475", 0, 51);
   }
 
   if (Para::visualization == 1) {
@@ -112,6 +112,9 @@ void newCA::writeDensity(const long t, newcaFcn fcn) {
 }
 
 void newCA::writeField(const long t) {
+  if (t == 0)
+    field << DiceRoller::timeSeed << '\n';
+
   for (int x{1}; x <= nrow; x++)
     for (int y{1}; y <= ncol; y++)
       if (plane.cell(x, y)->m_typeRep != Molecule::s) {
@@ -148,7 +151,7 @@ void newCA::readField(std::string_view t, unsigned lowerB, unsigned upperB) {
   const std::map<std::string, unsigned> whichK{
       {"002", 0}, {"003", 1}, {"013", 2}, {"012", 3},
       {"102", 4}, {"103", 5}, {"113", 6}, {"112", 7}};
-  std::ifstream fin{"wat"};
+  std::ifstream fin{"field.txt"};
   if (!fin) {
     std::cerr << "Cannot find field.txt\n";
     exit(1);
@@ -180,14 +183,14 @@ void newCA::readField(std::string_view t, unsigned lowerB, unsigned upperB) {
                 ch + 1, spaceAfterRow)); // std::string construction using
                                          // iterators makes a string from
                                          // [firstIt, lastIt);
-            assert(myRow >= 1 || myRow <= 512);
+            assert(myRow >= 1 || myRow <= Para::sys_nrow);
             continue;
           }
           case 2: {
             spaceAfterCol =
                 std::find_if(spaceAfterRow + 1, moleState.end(), isSpace);
             myCol = std::stoi(std::string(spaceAfterRow + 1, spaceAfterCol));
-            assert(myCol >= 1 || myCol <= 512);
+            assert(myCol >= 1 || myCol <= Para::sys_ncol);
             continue;
           }
           case 3: {
@@ -263,18 +266,18 @@ void newCA::readField(std::string_view t, unsigned lowerB, unsigned upperB) {
     }
   }
 
-  for (int row{1}; row <= 512; row++) {
-    if (plane.cell(row, lowerB)->m_typeComp != Molecule::free) {
-      decay(plane.cell(row, lowerB)->nei_ptr);
-      decay(plane.cell(row, lowerB).get());
-    }
-    if (plane.cell(row, upperB)->m_typeComp != Molecule::free) {
-      decay(plane.cell(row, upperB)->nei_ptr);
-      decay(plane.cell(row, upperB).get());
-    }
-  }
+  /* for (int row{1}; row <= 512; row++) { */
+  /*   if (plane.cell(row, lowerB)->m_typeComp != Molecule::free) { */
+  /*     decay(plane.cell(row, lowerB)->nei_ptr); */
+  /*     decay(plane.cell(row, lowerB).get()); */
+  /*   } */
+  /*   if (plane.cell(row, upperB)->m_typeComp != Molecule::free) { */
+  /*     decay(plane.cell(row, upperB)->nei_ptr); */
+  /*     decay(plane.cell(row, upperB).get()); */
+  /*   } */
+  /* } */
 
-  for (int myRow{1}; myRow <= 512; myRow++)
+  for (int myRow{1}; myRow <= Para::sys_nrow; myRow++)
     for (int myCol{1}; myCol < upperB; myCol++) {
       if (plane.cell(myRow, myCol)->m_typeComp == 1) {
         std::string key{
@@ -285,8 +288,8 @@ void newCA::readField(std::string_view t, unsigned lowerB, unsigned upperB) {
       }
     }
 
-  for (int x{1}; x <= 512; x++)
-    for (int y{1}; y <= 512; y++) {
+  for (int x{1}; x <= Para::sys_nrow; x++)
+    for (int y{1}; y <= Para::sys_ncol; y++) {
       if (plane.cell(x, y)->m_typeComp != Molecule::free) {
         assert(plane.cell(x, y)->m_typeRep != Molecule::s &&
                plane.cell(x, y)->nei_ptr->m_typeRep != Molecule::s);

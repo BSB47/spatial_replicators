@@ -37,7 +37,7 @@ void useCmd(char **myOpt,
       {"-C", &Para::sys_ncol},      {"-R", &Para::sys_nrow},
       {"-v", &Para::visualization}, {"-d", &Para::display_interval},
       {"-s", &Para::mt_seed},       {"-t", &Para::max_time},
-      {"-m", &Para::movie}};
+      {"-m", &Para::movie},         {"-r", &Para::read}};
 
   const static std::map<std::string_view, double *> myDoubleCmd{
       {"-D", &Para::decay_probability},
@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (argc > 2) {
-    std::string_view cmdList{"-h-v-m-s-d-t-C-R-D-I-M-A-B-G"};
+    std::string_view cmdList{"-h-v-m-s-d-t-r-C-R-D-I-M-A-B-G"};
     for (int i{0}; i < cmdList.length(); i++) {
       if (cmdList[i] == '-') {
         char **cmdItr = getCmd(argv, argv + argc, cmdList.substr(i, 2));
@@ -156,10 +156,10 @@ int main(int argc, char *argv[]) {
                     << "\n-B beta"
                     << "\n-G mutation_interval";
           exit(0);
-        } else if (cmdItr && i <= 14) // 12 is the index of -R, which is the
+        } else if (cmdItr && i <= 16) // 12 is the index of -R, which is the
                                       // last int parameter
           useCmd(cmdItr, 'i');
-        else if (cmdItr && i <= 26) // 24 is theindex of -G, which is the last
+        else if (cmdItr && i <= 28) // 24 is theindex of -G, which is the last
                                     // double parameter
           useCmd(cmdItr, 'd');
       }
